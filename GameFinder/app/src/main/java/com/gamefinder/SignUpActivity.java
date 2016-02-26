@@ -1,5 +1,7 @@
 package com.gamefinder;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -38,7 +40,7 @@ public class SignUpActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        final APIService service = retrofit.create(APIService.class);
+        final APIService service2 = retrofit.create(APIService.class);
         final Intent intent = new Intent(this, LoginActivity.class);
 
         createAccountButton.setOnClickListener(new View.OnClickListener() {
@@ -46,16 +48,37 @@ public class SignUpActivity extends AppCompatActivity {
                 SignUpUser signUpUser = new SignUpUser(username.getText().toString(),
                         password.getText().toString(),
                         confirmPassword.getText().toString());
-                Call<SignUpResponse> call = service.signUp(signUpUser);
+
+                Call<SignUpResponse> call = service2.signUp(signUpUser);
                 call.enqueue(new Callback<SignUpResponse>() {
                     @Override
                     public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
-                        if (!response.isSuccess()) {
-                            System.out.println("not successful");
-                            return;
+                        int responseCode = response.code();
+                        System.out.println(responseCode);
+                        if (responseCode == 403) {
+                            AlertDialog alertDialog = new AlertDialog.Builder(SignUpActivity.this).create();
+                            alertDialog.setTitle("Alert");
+                            alertDialog.setMessage("Password too short/password confirmation not same/email address already in use");
+                            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            alertDialog.show();
+                        } else if (responseCode == 200) {
+                            AlertDialog alertDialog = new AlertDialog.Builder(SignUpActivity.this).create();
+                            alertDialog.setTitle("Success");
+                            alertDialog.setMessage("Account creation successful!");
+                            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            startActivity(intent);
+                                        }
+                                    });
+                            alertDialog.show();
                         }
-                        //String responseMessage = response.body();
-                        //System.out.println(responseMessage);
                     }
 
                     @Override

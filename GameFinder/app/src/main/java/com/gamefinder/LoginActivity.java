@@ -47,13 +47,12 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 User user = new User(username.getText().toString(),password.getText().toString());
-                Call<User> call = service.signIn(user);
-                call.enqueue(new Callback<User>() {
+                Call<LoginResponse> call = service.signIn(user);
+                call.enqueue(new Callback<LoginResponse>() {
                     @Override
-                    public void onResponse(Call<User> call, Response<User> response) {
-                        String responseMessage = response.message();
-                        System.out.println(responseMessage);
-                        if (responseMessage.equals("Unauthorized ")) {
+                    public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                        int responseCode = response.code();
+                        if (responseCode == 401) {
                             AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
                             alertDialog.setTitle("Alert");
                             alertDialog.setMessage("Invalid login information");
@@ -64,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
                                         }
                                     });
                             alertDialog.show();
-                        } else if (responseMessage.equals("OK ")) {
+                        } else if (responseCode == 200) {
                             AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
                             alertDialog.setTitle("Success");
                             alertDialog.setMessage("Login successful!");
@@ -79,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<User> call, Throwable t) {
+                    public void onFailure(Call<LoginResponse> call, Throwable t) {
                         System.out.println("failure");
                     }
                 });

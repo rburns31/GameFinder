@@ -16,7 +16,7 @@ public interface APIService {
             "UID: tripp@tripp-roberts.com"
     })
     @POST("users/sign_in")
-    Call<User> signIn(@Body User user);
+    Call<LoginResponse> signIn(@Body User user);
 
     @Headers({
             "Access-Token: XM1cZm2pMDfrAZjsiktK0g",
@@ -24,6 +24,6 @@ public interface APIService {
             "Token-Type: Bearer",
             "UID: tripp@tripp-roberts.com"
     })
-    @POST("users/sign_up")
+    @POST("users")
     Call<SignUpResponse> signUp(@Body SignUpUser user);
 }
