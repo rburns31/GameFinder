@@ -4,13 +4,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,14 +24,12 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final Button createAccountButton = (Button) findViewById(R.id.createAccount);
         final EditText username = (EditText) findViewById(R.id.username);
         final EditText password = (EditText) findViewById(R.id.password);
         final EditText confirmPassword = (EditText) findViewById(R.id.confirmPassword);
+        final TextView linkLogin = (TextView) findViewById(R.id.link_login);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -87,6 +83,14 @@ public class SignUpActivity extends AppCompatActivity {
                     }
                 });
             }
+        });
+
+        linkLogin.setOnClickListener(new View.OnClickListener() {
+           @Override
+            public void onClick(View v) {
+               //Finish the registration screen and return to the Login Activity
+               finish();
+           }
         });
 
     }

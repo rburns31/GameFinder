@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,7 +26,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         final Button loginButton = (Button) findViewById(R.id.loginButton);
-        final Button signUpButton = (Button) findViewById(R.id.signUpButton);
+        final TextView signUp = (TextView) findViewById(R.id.signUpButton);
         final EditText username = (EditText) findViewById(R.id.username);
         final EditText password = (EditText) findViewById(R.id.password);
 
@@ -37,9 +38,11 @@ public class LoginActivity extends AppCompatActivity {
         final APIService service = retrofit.create(APIService.class);
         final Intent intent = new Intent(this, SignUpActivity.class);
 
-        signUpButton.setOnClickListener(new View.OnClickListener() {
+        signUp.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
-                startActivity(intent);
+                //Start the Sign Up Activity
+                startActivity(intent);;
             }
         });
 
