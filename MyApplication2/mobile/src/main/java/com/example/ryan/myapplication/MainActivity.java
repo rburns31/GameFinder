@@ -2,84 +2,102 @@ package com.example.ryan.myapplication;
 
 import android.content.Context;
 import android.hardware.ConsumerIrManager;
-import android.hardware.ConsumerIrManager.CarrierFrequencyRange;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
-    public static final String SAMSUNG_POWER_HEX = "0000 006d 0022 0003 00a9 00a8 0015 003f 0015 " +
-            "003f 0015 003f 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 003f 0015 " +
-            "003f 0015 003f 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 " +
-            "003f 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0040 0015 " +
-            "0015 0015 003f 0015 003f 0015 003f 0015 003f 0015 003f 0015 003f 0015 0702 00a9 " +
-            "00a8 0015 0015 0015 0e6e";
     public static final String SAMSUNG_CHANNEL_UP_HEX = "0000 006d 0022 0003 00a9 00a8 0015 003f " +
             "0015 003f 0015 003f 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 003f " +
             "0015 003f 0015 003f 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 " +
             "0015 003f 0015 0015 0015 0015 0015 003f 0015 0015 0015 0015 0015 0015 0015 003f " +
             "0015 0015 0015 003f 0015 003f 0015 0015 0015 0040 0015 003f 0015 003f 0015 0702 " +
             "00a9 00a8 0015 0015 0015 0e6e";
-    public static final String TEST_HEX = "0000 006D 0000 0022 00AC 00AC 0015 0040 0015 0040 0015 0040 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0040 0015 0040 0015 0040 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0015 0040 0015 0040 0015 0015 0015 0015 0015 0040 0015 0040 0015 0040 0015 0040 0015 0015 0015 0015 0015 0040 0015 0040 0015 0015 0015 0689";
 
-    private int frequency;
+    public static final int[] SAMSUNG_POWER =
+            {4394,4368,546,1638,546,1638,546,1638,546,546,546,546,546,546,546,546,546,546,546,1638,
+                    546,1638,546,1638,546,546,546,546,546,546,546,546,546,546,546,546,546,1638,546,
+                    546,546,546,546,546,546,546,546,546,546,546,546,1664,546,546,546,1638,546,1638,
+                    546,1638,546,1638,546,1638,546,1638,546,46644,4394,4368,546,546,546,96044};
+    public static final int[] SAMSUNG_CHANNEL_UP =
+            {4394,4368,546,1638,546,1638,546,1638,546,546,546,546,546,546,546,546,546,546,546,1638,
+                    546,1638,546,1638,546,546,546,546,546,546,546,546,546,546,546,546,546,1638,546,
+                    546,546,546,546,1638,546,546,546,546,546,546,546,1638,546,546,546,1638,546,1638,
+                    546,546,546,1664,546,1638,546,1638,546,46644,4394,4368,546,546,546,96044,};
+
+    public static final int[] TOSHIBA_POWER =
+            {8550,4300,550,525,550,525,550,525,550,525,550,525,550,525,550,1600,550,525,550,1600,
+                    550,1600,550,1600,550,1600,550,1600,550,1600,550,525,550,1600,550,525,550,1600,
+                    550,525,550,525,550,1600,550,525,550,525,550,525,550,1600,550,525,550,1600,550,
+                    1600,550,525,550,1600,550,1600,550,1600,550,38275,8550,2150,550,91825};
+
+    public static final HashMap<String, int[]> controls = new HashMap<>();
+    static {
+        controls.put("SAMSUNG_POWER", SAMSUNG_POWER);
+        controls.put("SAMSUNG_CHANNEL_UP", SAMSUNG_CHANNEL_UP);
+
+        controls.put("TOSHIBA_POWER", TOSHIBA_POWER);
+    }
+
+    private static int FREQUENCY;
+    private ConsumerIrManager irManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context mContext = MainActivity.this;
-                ConsumerIrManager irManager =
-                        (ConsumerIrManager) mContext.getSystemService(CONSUMER_IR_SERVICE);
-                CarrierFrequencyRange freqRange = irManager.getCarrierFrequencies()[0];
+        Context mContext = MainActivity.this;
+        irManager = (ConsumerIrManager) mContext.getSystemService(CONSUMER_IR_SERVICE);
 
-                String[] temp = count2duration(hex2dec(TEST_HEX)).split(",");
-                int[] durations = new int[temp.length - 1];
-                for (int i = 1; i < temp.length; i++) {
-                    durations[i - 1] = Integer.parseInt(temp[i]);
-                    //System.out.println(durations[i - 1]);
-                }
+        count2duration(hex2dec(SAMSUNG_CHANNEL_UP_HEX));
+    }
 
-                irManager.transmit(frequency, durations);
-
-                TextView textView = (TextView) findViewById(R.id.textView);
-                textView.setText("Did it work?");
-            }
-        });
+    /**
+     * Button handler for any control clicked
+     * @param v The button which was pushed
+     */
+    public void onControlClicked(View v) {
+        Spinner tvBrands = (Spinner) findViewById(R.id.spinner);
+        Button thisControl = (Button) v;
+        int[] payload = controls.get(tvBrands.getSelectedItem().toString().toUpperCase() + "_"
+                + thisControl.getText().toString().toUpperCase().replace(" ","_"));
+        if (payload != null) {
+            irManager.transmit(FREQUENCY, payload);
+        } else {
+            System.out.println("That control is not currently supported for that brand. Sorry!");
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu, this adds items to the action bar if it is present
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
+    /**
+     * Handle action bar item clicks here
+     * The action bar will automatically handle clicks on the Home/Up button, as long as you
+     *   specify a parent activity in AndroidManifest.xml
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -89,7 +107,7 @@ public class MainActivity extends ActionBarActivity {
      * @return
      */
     private String hex2dec(String irData) {
-        List<String> list = new ArrayList<String>(Arrays.asList(irData.split(" ")));
+        List<String> list = new ArrayList<>(Arrays.asList(irData.split(" ")));
         list.remove(0); // dummy
         int frequency = Integer.parseInt(list.remove(0), 16); // frequency
         list.remove(0); // seq1
@@ -115,9 +133,9 @@ public class MainActivity extends ActionBarActivity {
      * @return
      */
     private String count2duration(String countPattern) {
-        List<String> list = new ArrayList<String>(Arrays.asList(countPattern.split(",")));
-        frequency = Integer.parseInt(list.get(0));
-        int pulses = 1000000 / frequency;
+        List<String> list = new ArrayList<>(Arrays.asList(countPattern.split(",")));
+        FREQUENCY = Integer.parseInt(list.get(0));
+        int pulses = 1000000 / FREQUENCY;
         int count;
         int duration;
 
@@ -134,7 +152,7 @@ public class MainActivity extends ActionBarActivity {
             durationPattern += s + ",";
         }
 
-        System.out.println("Frequency: " + frequency);
+        System.out.println("Frequency: " + FREQUENCY);
         System.out.println("Duration Pattern: " + durationPattern);
 
         return durationPattern;
