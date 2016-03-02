@@ -85,7 +85,13 @@ public class LoginActivity extends AppCompatActivity {
                         System.out.println("failure");
                     }
                 });
+                openRemote();
             }
         });
+    }
+
+    private void openRemote() {
+        Intent intent = new Intent(this, RemoteActivity.class);
+        startActivity(intent);
     }
 }
