@@ -10,8 +10,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -30,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
         final EditText username = (EditText) findViewById(R.id.username);
         final EditText password = (EditText) findViewById(R.id.password);
 
-        Retrofit retrofit = new Retrofit.Builder()
+        final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -56,9 +59,16 @@ public class LoginActivity extends AppCompatActivity {
                     public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                         int responseCode = response.code();
                         if (responseCode == 401) {
+                            String errorMessage = "";
+                            try {
+                                LoginErrorResponse errorResponse = (LoginErrorResponse)retrofit.responseBodyConverter(LoginErrorResponse.class,LoginErrorResponse.class.getAnnotations()).convert(response.errorBody());
+                                errorMessage = errorResponse.getErrors().get(0);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                             AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
                             alertDialog.setTitle("Alert");
-                            alertDialog.setMessage("Invalid login information");
+                            alertDialog.setMessage(errorMessage);
                             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
@@ -85,7 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                         System.out.println("failure");
                     }
                 });
-                openRemote();
+                //openRemote();
             }
         });
     }

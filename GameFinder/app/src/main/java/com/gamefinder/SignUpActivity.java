@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -27,11 +29,11 @@ public class SignUpActivity extends AppCompatActivity {
 
         final Button createAccountButton = (Button) findViewById(R.id.createAccount);
         final EditText username = (EditText) findViewById(R.id.username);
-        final EditText password = (EditText) findViewById(R.id.password);
+        final EditText password = (EditText) findViewById(R.id.input_password);
         final EditText confirmPassword = (EditText) findViewById(R.id.confirmPassword);
         final TextView linkLogin = (TextView) findViewById(R.id.link_login);
 
-        Retrofit retrofit = new Retrofit.Builder()
+        final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -52,9 +54,16 @@ public class SignUpActivity extends AppCompatActivity {
                         int responseCode = response.code();
                         System.out.println(responseCode);
                         if (responseCode == 403) {
+                            String errorMessage = "";
+                            try {
+                                SignUpErrorResponse errorResponse = (SignUpErrorResponse)retrofit.responseBodyConverter(SignUpErrorResponse.class,SignUpErrorResponse.class.getAnnotations()).convert(response.errorBody());
+                                errorMessage = errorResponse.getSignUpErrors().full_messages.get(0);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                             AlertDialog alertDialog = new AlertDialog.Builder(SignUpActivity.this).create();
                             alertDialog.setTitle("Alert");
-                            alertDialog.setMessage("Password too short/password confirmation not same/email address already in use");
+                            alertDialog.setMessage(errorMessage);
                             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
