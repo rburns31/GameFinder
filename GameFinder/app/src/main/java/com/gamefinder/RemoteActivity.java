@@ -1,6 +1,8 @@
 package com.gamefinder;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.hardware.ConsumerIrManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -96,6 +98,17 @@ public class RemoteActivity extends AppCompatActivity {
         if (payload != null && frequency != 0) {
             irManager.transmit(frequency, payload);
         } else {
+            AlertDialog alertDialog
+                    = new AlertDialog.Builder(RemoteActivity.this).create();
+            alertDialog.setTitle("Alert");
+            alertDialog.setMessage("That control is not currently supported for that brand. Sorry!");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
             System.out.println("That control is not currently supported for that brand. Sorry!");
         }
     }

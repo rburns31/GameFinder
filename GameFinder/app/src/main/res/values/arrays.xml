@@ -3,5 +3,6 @@
     <string-array name="spinnerItems">
         <item> Samsung </item>
         <item> Toshiba </item>
+        <item> LG </item>
     </string-array>
 </resources>

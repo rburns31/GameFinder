@@ -8,7 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
@@ -26,6 +29,9 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        ImageView imageView = (ImageView) findViewById(R.id.imageView);
+        Picasso.with(SignUpActivity.this).load(R.drawable.logo).fit().into(imageView);
 
         final Button createAccountButton = (Button) findViewById(R.id.createAccount);
         final EditText username = (EditText) findViewById(R.id.username);
@@ -56,12 +62,17 @@ public class SignUpActivity extends AppCompatActivity {
                         if (responseCode == 403) {
                             String errorMessage = "";
                             try {
-                                SignUpErrorResponse errorResponse = (SignUpErrorResponse)retrofit.responseBodyConverter(SignUpErrorResponse.class,SignUpErrorResponse.class.getAnnotations()).convert(response.errorBody());
+                                SignUpErrorResponse errorResponse
+                                        = (SignUpErrorResponse) retrofit.responseBodyConverter(
+                                                SignUpErrorResponse.class,
+                                                SignUpErrorResponse.class.getAnnotations())
+                                        .convert(response.errorBody());
                                 errorMessage = errorResponse.getSignUpErrors().full_messages.get(0);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            AlertDialog alertDialog = new AlertDialog.Builder(SignUpActivity.this).create();
+                            AlertDialog alertDialog
+                                    = new AlertDialog.Builder(SignUpActivity.this).create();
                             alertDialog.setTitle("Alert");
                             alertDialog.setMessage(errorMessage);
                             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
@@ -72,7 +83,8 @@ public class SignUpActivity extends AppCompatActivity {
                                     });
                             alertDialog.show();
                         } else if (responseCode == 200) {
-                            AlertDialog alertDialog = new AlertDialog.Builder(SignUpActivity.this).create();
+                            AlertDialog alertDialog
+                                    = new AlertDialog.Builder(SignUpActivity.this).create();
                             alertDialog.setTitle("Success");
                             alertDialog.setMessage("Account creation successful!");
                             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
@@ -101,7 +113,5 @@ public class SignUpActivity extends AppCompatActivity {
                finish();
            }
         });
-
     }
-
 }

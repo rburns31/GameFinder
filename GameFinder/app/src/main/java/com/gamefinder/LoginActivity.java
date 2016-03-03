@@ -8,13 +8,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -27,6 +29,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        ImageView imageView = (ImageView) findViewById(R.id.imageView);
+        Picasso.with(LoginActivity.this).load(R.drawable.logo).fit().into(imageView);
 
         final Button loginButton = (Button) findViewById(R.id.loginButton);
         final TextView signUp = (TextView) findViewById(R.id.signUpButton);
@@ -61,12 +66,17 @@ public class LoginActivity extends AppCompatActivity {
                         if (responseCode == 401) {
                             String errorMessage = "";
                             try {
-                                LoginErrorResponse errorResponse = (LoginErrorResponse)retrofit.responseBodyConverter(LoginErrorResponse.class,LoginErrorResponse.class.getAnnotations()).convert(response.errorBody());
+                                LoginErrorResponse errorResponse
+                                        = (LoginErrorResponse) retrofit.responseBodyConverter(
+                                                LoginErrorResponse.class,
+                                                LoginErrorResponse.class.getAnnotations())
+                                        .convert(response.errorBody());
                                 errorMessage = errorResponse.getErrors().get(0);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
+                            AlertDialog alertDialog
+                                    = new AlertDialog.Builder(LoginActivity.this).create();
                             alertDialog.setTitle("Alert");
                             alertDialog.setMessage(errorMessage);
                             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
@@ -77,7 +87,8 @@ public class LoginActivity extends AppCompatActivity {
                                     });
                             alertDialog.show();
                         } else if (responseCode == 200) {
-                            AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
+                            AlertDialog alertDialog
+                                    = new AlertDialog.Builder(LoginActivity.this).create();
                             alertDialog.setTitle("Success");
                             alertDialog.setMessage("Login successful!");
                             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
@@ -95,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                         System.out.println("failure");
                     }
                 });
-                //openRemote();
+                openRemote();
             }
         });
     }
