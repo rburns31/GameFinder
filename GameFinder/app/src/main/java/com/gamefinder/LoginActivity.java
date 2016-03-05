@@ -14,12 +14,15 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.util.List;
 
+import okhttp3.Headers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Header;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -50,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Start the Sign Up Activity
-                startActivity(intent);;
+                startActivity(intent);
             }
         });
 
@@ -89,15 +92,8 @@ public class LoginActivity extends AppCompatActivity {
                         } else if (responseCode == 200) {
                             AlertDialog alertDialog
                                     = new AlertDialog.Builder(LoginActivity.this).create();
-                            alertDialog.setTitle("Success");
-                            alertDialog.setMessage("Login successful!");
-                            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                            alertDialog.show();
+                            Headers headers = response.headers();
+                            openLeagues(headers);
                         }
                     }
 
@@ -106,9 +102,20 @@ public class LoginActivity extends AppCompatActivity {
                         System.out.println("failure");
                     }
                 });
-                openRemote();
+                //openRemote();
             }
         });
+    }
+
+    private void openLeagues(Headers headers) {
+        Intent intent = new Intent(this, LeagueInterestActivity.class);
+        String accessToken = headers.get("Access-Token");
+        String client = headers.get("Client");
+        String uid = headers.get("UID");
+        intent.putExtra("accessToken",accessToken);
+        intent.putExtra("client", client);
+        intent.putExtra("uid", uid);
+        startActivity(intent);
     }
 
     private void openRemote() {
