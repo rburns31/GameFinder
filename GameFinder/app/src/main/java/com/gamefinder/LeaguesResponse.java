@@ -8,6 +8,7 @@ import java.util.List;
 public class LeaguesResponse {
     private String id;
     private String name;
+    private float rating;
 
     public String getId ()
     {
@@ -28,4 +29,8 @@ public class LeaguesResponse {
     {
         this.name = name;
     }
+
+    public float getRatingStar() {return rating;}
+
+    public void setRatingStar(float rating) {this.rating = rating;}
 }

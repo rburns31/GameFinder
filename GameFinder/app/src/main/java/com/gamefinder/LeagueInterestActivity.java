@@ -1,5 +1,7 @@
 package com.gamefinder;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,7 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -33,6 +37,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
     public final String BASE_URL = "https://fathomless-woodland-78351.herokuapp.com/api/";
     private ListView listView;
     ArrayAdapter<String> adapter;
+    AppCompatActivity thisActivity = this;
     ArrayList<String> leagues;
     ArrayList<Integer> ids;
 
@@ -41,7 +46,8 @@ public class LeagueInterestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_league_interest);
 
-        listView = (ListView) findViewById(R.id.listView);
+        listView = (ListView) findViewById(R.id.league_listview);
+
         Intent intent = getIntent();
         String accessToken = intent.getStringExtra("accessToken");
         String client = intent.getStringExtra("client");
@@ -67,20 +73,8 @@ public class LeagueInterestActivity extends AppCompatActivity {
                         leagues.add(responseBody.get(i).getName());
                         ids.add(Integer.parseInt(responseBody.get(i).getId())); //ids not used yet
                     }
-                    final StableArrayAdapter adapter = new StableArrayAdapter(getApplicationContext(),
-                            android.R.layout.simple_list_item_1, leagues) {
-                        @Override
-                        public View getView(int position, View convertView,
-                                            ViewGroup parent) {
-                            View view =super.getView(position, convertView, parent);
-
-                            TextView textView=(TextView) view.findViewById(android.R.id.text1);
-
-                            /*YOUR CHOICE OF COLOR*/
-                            textView.setTextColor(Color.BLACK);
-                            return view;
-                        }
-                    };
+                    final ArrayAdapter<LeaguesResponse> adapter = new ListViewAdapter(thisActivity,
+                            R.layout.item_listview, responseBody);
                     listView.setAdapter(adapter);
                     System.out.println(responseBody.toString());
                 } else {
@@ -94,36 +88,36 @@ public class LeagueInterestActivity extends AppCompatActivity {
             }
         });
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        final Button nextButton = (Button) findViewById(R.id.nextButton);
+        final Intent nextIntent = new Intent(this, TeamInterestActivity.class);
 
+        nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, final View view,
-                                    int position, long id) {
-                final String item = (String) parent.getItemAtPosition(position);
-                view.animate().setDuration(2000).alpha(0)
-                        .withEndAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                leagues.remove(item);
-                                adapter.notifyDataSetChanged();
-                                view.setAlpha(1);
-                            }
-                        });
+            public void onClick(View v) {
+                //Start the Team Interest Activity
+                startActivity(nextIntent);
             }
-
         });
     }
 
-    private class StableArrayAdapter extends ArrayAdapter<String> {
+    /*private AdapterView.OnItemClickListener onItemClickListener() { //Might come back to it
+        return new AdapterView.OnItemClickListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final Dialog dialog = new Dialog(getApplicationContext());
+                dialog.setContentView(R.layout.layout_dialog);
+                dialog.setTitle("Leagues");
 
-        HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
+                TextView name = (TextView) dialog.findViewById(R.id.league_name);
+                TextView starRate = (TextView) dialog.findViewById(R.id.rate);
 
-        public StableArrayAdapter(Context context, int textViewResourceId,
-                                  List<String> objects) {
-            super(context, textViewResourceId, objects);
-            for (int i = 0; i < objects.size(); ++i) {
-                mIdMap.put(objects.get(i), i);
+                LeaguesResponse leagues = (LeaguesResponse) parent.getAdapter().getItem(position);
+                name.setText("League name: " + leagues.getName());
+                starRate.setText("Your rating: " + leagues.getRatingStar());
+
+                dialog.show();
             }
-        }
-    }
+        };
+    }*/
 }

@@ -54,6 +54,11 @@
             android:label="@string/title_activity_league_interest"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
+        <activity
+            android:name=".TeamInterestActivity"
+            android:label="TeamInterestActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>
