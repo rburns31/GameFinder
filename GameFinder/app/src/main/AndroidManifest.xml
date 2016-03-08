@@ -52,7 +52,7 @@
         <activity
             android:name=".LeagueInterestActivity"
             android:label="@string/title_activity_league_interest"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
             android:name=".TeamInterestActivity"

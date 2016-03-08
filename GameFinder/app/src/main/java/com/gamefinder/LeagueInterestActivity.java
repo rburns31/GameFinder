@@ -95,7 +95,9 @@ public class LeagueInterestActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Start the Team Interest Activity
-                startActivity(nextIntent);
+                //startActivity(nextIntent);
+                // Temporary (for initial code demo)
+                openRemote();
             }
         });
     }
@@ -120,4 +122,9 @@ public class LeagueInterestActivity extends AppCompatActivity {
             }
         };
     }*/
+
+    private void openRemote() {
+        Intent intent = new Intent(this, RemoteActivity.class);
+        startActivity(intent);
+    }
 }

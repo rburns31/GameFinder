@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,13 +33,14 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
         Picasso.with(LoginActivity.this).load(R.drawable.logo).fit().into(imageView);
 
         final Button loginButton = (Button) findViewById(R.id.loginButton);
         final TextView signUp = (TextView) findViewById(R.id.signUpButton);
-        final EditText username = (EditText) findViewById(R.id.username);
+        final EditText email = (EditText) findViewById(R.id.email);
         final EditText password = (EditText) findViewById(R.id.password);
 
         final Retrofit retrofit = new Retrofit.Builder()
@@ -60,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                User user = new User(username.getText().toString(),password.getText().toString());
+                User user = new User(email.getText().toString(), password.getText().toString());
                 Call<LoginResponse> call = service.signIn(user);
                 call.enqueue(new Callback<LoginResponse>() {
                     @Override
@@ -71,8 +73,8 @@ public class LoginActivity extends AppCompatActivity {
                             try {
                                 LoginErrorResponse errorResponse
                                         = (LoginErrorResponse) retrofit.responseBodyConverter(
-                                                LoginErrorResponse.class,
-                                                LoginErrorResponse.class.getAnnotations())
+                                        LoginErrorResponse.class,
+                                        LoginErrorResponse.class.getAnnotations())
                                         .convert(response.errorBody());
                                 errorMessage = errorResponse.getErrors().get(0);
                             } catch (IOException e) {
@@ -102,7 +104,6 @@ public class LoginActivity extends AppCompatActivity {
                         System.out.println("failure");
                     }
                 });
-                //openRemote();
             }
         });
     }
@@ -115,11 +116,6 @@ public class LoginActivity extends AppCompatActivity {
         intent.putExtra("accessToken",accessToken);
         intent.putExtra("client", client);
         intent.putExtra("uid", uid);
-        startActivity(intent);
-    }
-
-    private void openRemote() {
-        Intent intent = new Intent(this, RemoteActivity.class);
         startActivity(intent);
     }
 }
