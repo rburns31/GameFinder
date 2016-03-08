@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.Rating;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -40,6 +41,8 @@ public class LeagueInterestActivity extends AppCompatActivity {
     AppCompatActivity thisActivity = this;
     ArrayList<String> leagues;
     ArrayList<Integer> ids;
+    List<LeaguesResponse> responseBody;
+    int[] leagueIDs, ratings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +52,10 @@ public class LeagueInterestActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.league_listview);
 
         Intent intent = getIntent();
-        String accessToken = intent.getStringExtra("accessToken");
-        String client = intent.getStringExtra("client");
-        String uid = intent.getStringExtra("uid");
+        final String accessToken = intent.getStringExtra("accessToken");
+        final String client = intent.getStringExtra("client");
+        final String uid = intent.getStringExtra("uid");
+        final List<CompetitorsResponse> competitors = new ArrayList<>();
 
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -68,7 +72,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<LeaguesResponse>> call, retrofit2.Response<List<LeaguesResponse>> response) {
                 if (response.isSuccess()) {
-                    List<LeaguesResponse> responseBody = response.body();
+                    responseBody = response.body();
                     for (int i = 0; i < responseBody.size(); i++) {
                         leagues.add(responseBody.get(i).getName());
                         ids.add(Integer.parseInt(responseBody.get(i).getId())); //ids not used yet
@@ -95,6 +99,74 @@ public class LeagueInterestActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Start the Team Interest Activity
+                PreferenceAttributes[] attributes = new PreferenceAttributes[responseBody.size()];
+                leagueIDs = new int[responseBody.size()];
+                ratings = new int[leagueIDs.length];
+                for (int i = 0; i < responseBody.size(); i++) {
+                    int id = Integer.parseInt(responseBody.get(i).getId());
+                    leagueIDs[i] = id;
+                    Float ratingStar = responseBody.get(i).getRatingStar();
+                    ratings[i] = ratingStar.intValue();
+                    PreferenceAttributes preferenceAttribute = new PreferenceAttributes();
+                    preferenceAttribute.setPreference_type("League");
+                    preferenceAttribute.setPreference_id(id);
+                    preferenceAttribute.setAmount(ratingStar.intValue());
+                    preferenceAttribute.setScale(5);
+                    attributes[i] = preferenceAttribute;
+                }
+                PreferenceUser user = new PreferenceUser();
+                user.setPreferences_attributes(attributes);
+                PreferenceBody preference = new PreferenceBody();
+                preference.setUser(user);
+
+                Call<List<PreferencesResponse>> call = service.putPreferences(accessToken,client,uid,preference);
+                call.enqueue(new Callback<List<PreferencesResponse>>() {
+                    @Override
+                    public void onResponse(Call<List<PreferencesResponse>> call, retrofit2.Response<List<PreferencesResponse>> response) {
+                        if (response.isSuccess()) {
+/*                            for (int i = 0; i < leagueIDs.length; i++) {
+                                int id = leagueIDs[i];
+                                int rating = ratings[i];
+                                if (rating > 0) {
+                                    Call<List<CompetitorsResponse>> getCompetitors = service.getCompetitors(String.valueOf(id), accessToken, client, uid);
+                                    try {
+                                        List<CompetitorsResponse> responseBody = getCompetitors.execute().body();
+                                        competitors.addAll(responseBody);
+                                    } catch (IOException e) {
+                                        System.out.println(e.getMessage());
+                                    }
+                                    getCompetitors.enqueue(new Callback<List<CompetitorsResponse>>() {
+                                        @Override
+                                        public void onResponse(Call<List<CompetitorsResponse>> call, retrofit2.Response<List<CompetitorsResponse>> response) {
+                                            if (response.isSuccess()) {
+                                                List<CompetitorsResponse> responseBody = response.body();
+                                                System.out.println(responseBody.size());
+                                                competitors.addAll(responseBody);
+
+                                            } else {
+                                                System.out.println("response failure");
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<List<CompetitorsResponse>> call, Throwable t) {
+                                            System.out.println(t.getMessage());
+                                        }
+                                    });
+                                }
+                            }*/
+                        } else {
+                            System.out.println("response failure");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<PreferencesResponse>> call, Throwable t) {
+                        System.out.println(t.getMessage());
+                    }
+                });
+
+                System.out.println(competitors.size());
                 startActivity(nextIntent);
             }
         });
