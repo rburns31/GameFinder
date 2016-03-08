@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -29,12 +30,13 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
         Picasso.with(SignUpActivity.this).load(R.drawable.logo).fit().into(imageView);
 
         final Button createAccountButton = (Button) findViewById(R.id.createAccount);
-        final EditText username = (EditText) findViewById(R.id.username);
+        final EditText email = (EditText) findViewById(R.id.email);
         final EditText password = (EditText) findViewById(R.id.input_password);
         final EditText confirmPassword = (EditText) findViewById(R.id.confirmPassword);
         final TextView linkLogin = (TextView) findViewById(R.id.link_login);
@@ -49,7 +51,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         createAccountButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                SignUpUser signUpUser = new SignUpUser(username.getText().toString(),
+                SignUpUser signUpUser = new SignUpUser(email.getText().toString(),
                         password.getText().toString(),
                         confirmPassword.getText().toString());
 

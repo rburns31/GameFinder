@@ -94,9 +94,9 @@ public class RemoteActivity extends AppCompatActivity {
         String id = tvBrands.getSelectedItem().toString().toLowerCase() + "_"
                 + thisControl.getText().toString().toLowerCase().replace(" ","_");
         int[] payload = controls.get(id);
-        int frequency = frequencies.get(id);
-        if (payload != null && frequency != 0) {
-            irManager.transmit(frequency, payload);
+        Integer frequency = frequencies.get(id);
+        if (payload != null && frequency != null) {
+            irManager.transmit((int) frequency, payload);
         } else {
             AlertDialog alertDialog
                     = new AlertDialog.Builder(RemoteActivity.this).create();

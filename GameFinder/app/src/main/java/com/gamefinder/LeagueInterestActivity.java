@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.media.Rating;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -50,6 +51,10 @@ public class LeagueInterestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_league_interest);
 
         listView = (ListView) findViewById(R.id.league_listview);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                .permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         Intent intent = getIntent();
         final String accessToken = intent.getStringExtra("accessToken");
@@ -124,7 +129,8 @@ public class LeagueInterestActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<List<PreferencesResponse>> call, retrofit2.Response<List<PreferencesResponse>> response) {
                         if (response.isSuccess()) {
-/*                            for (int i = 0; i < leagueIDs.length; i++) {
+
+                            for (int i = 0; i < leagueIDs.length; i++) {
                                 int id = leagueIDs[i];
                                 int rating = ratings[i];
                                 if (rating > 0) {
@@ -135,7 +141,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
                                     } catch (IOException e) {
                                         System.out.println(e.getMessage());
                                     }
-                                    getCompetitors.enqueue(new Callback<List<CompetitorsResponse>>() {
+/*                                    getCompetitors.enqueue(new Callback<List<CompetitorsResponse>>() {
                                         @Override
                                         public void onResponse(Call<List<CompetitorsResponse>> call, retrofit2.Response<List<CompetitorsResponse>> response) {
                                             if (response.isSuccess()) {
@@ -152,9 +158,23 @@ public class LeagueInterestActivity extends AppCompatActivity {
                                         public void onFailure(Call<List<CompetitorsResponse>> call, Throwable t) {
                                             System.out.println(t.getMessage());
                                         }
-                                    });
+                                    });*/
                                 }
-                            }*/
+                            }
+                            ArrayList<Integer> ids = new ArrayList<Integer>();
+                            ArrayList<Integer> league_ids = new ArrayList<Integer>();
+                            ArrayList<String> names = new ArrayList<String>();
+
+                            for (int i = 0; i < competitors.size(); i++) {
+                                ids.add(Integer.parseInt(competitors.get(i).getId()));
+                                league_ids.add(Integer.parseInt(competitors.get(i).getLeague_id()));
+                                names.add(competitors.get(i).getName());
+                            }
+
+                            nextIntent.putIntegerArrayListExtra("ids", ids);
+                            nextIntent.putIntegerArrayListExtra("league_ids", league_ids);
+                            nextIntent.putStringArrayListExtra("names", names);
+                            //startActivity(nextIntent);
                         } else {
                             System.out.println("response failure");
                         }
@@ -166,8 +186,11 @@ public class LeagueInterestActivity extends AppCompatActivity {
                     }
                 });
 
-                System.out.println(competitors.size());
-                startActivity(nextIntent);
+
+
+                //startActivity(nextIntent);
+                // Temporary (for initial code demo)
+                openRemote();
             }
         });
     }
@@ -192,4 +215,9 @@ public class LeagueInterestActivity extends AppCompatActivity {
             }
         };
     }*/
+
+    private void openRemote() {
+        Intent intent = new Intent(this, RemoteActivity.class);
+        startActivity(intent);
+    }
 }
