@@ -8,6 +8,7 @@ import android.widget.ListView;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Paul on 3/6/2016.
@@ -18,17 +19,20 @@ public class TeamInterestActivity extends AppCompatActivity {
     ArrayAdapter<String> adapter;
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_interest);
 
         Intent intent = getIntent();
+        try {
+            Bundle bundleObject = getIntent().getExtras();
+            List<List<CompetitorsResponse>> competitors = (List<List<CompetitorsResponse>>) bundleObject.getSerializable("competitorsList");
+            System.out.println(competitors.size());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        ArrayList<Integer> ids = intent.getIntegerArrayListExtra("ids");
-        ArrayList<Integer> league_ids = intent.getIntegerArrayListExtra("league_ids");
-        ArrayList<String> names = intent.getStringArrayListExtra("names");
-
-        System.out.println(ids.size());
 
     }
 }

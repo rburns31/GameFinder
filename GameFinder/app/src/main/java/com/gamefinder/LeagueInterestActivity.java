@@ -22,6 +22,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +61,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
         final String accessToken = intent.getStringExtra("accessToken");
         final String client = intent.getStringExtra("client");
         final String uid = intent.getStringExtra("uid");
-        final List<CompetitorsResponse> competitors = new ArrayList<>();
+        final List<List<CompetitorsResponse>> competitors = new ArrayList<>();
 
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -137,7 +138,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
                                     Call<List<CompetitorsResponse>> getCompetitors = service.getCompetitors(String.valueOf(id), accessToken, client, uid);
                                     try {
                                         List<CompetitorsResponse> responseBody = getCompetitors.execute().body();
-                                        competitors.addAll(responseBody);
+                                        competitors.add(responseBody);
                                     } catch (IOException e) {
                                         System.out.println(e.getMessage());
                                     }
@@ -161,20 +162,10 @@ public class LeagueInterestActivity extends AppCompatActivity {
                                     });*/
                                 }
                             }
-                            ArrayList<Integer> ids = new ArrayList<Integer>();
-                            ArrayList<Integer> league_ids = new ArrayList<Integer>();
-                            ArrayList<String> names = new ArrayList<String>();
-
-                            for (int i = 0; i < competitors.size(); i++) {
-                                ids.add(Integer.parseInt(competitors.get(i).getId()));
-                                league_ids.add(Integer.parseInt(competitors.get(i).getLeague_id()));
-                                names.add(competitors.get(i).getName());
-                            }
-
-                            nextIntent.putIntegerArrayListExtra("ids", ids);
-                            nextIntent.putIntegerArrayListExtra("league_ids", league_ids);
-                            nextIntent.putStringArrayListExtra("names", names);
-                            //startActivity(nextIntent);
+                            Bundle bundleObject = new Bundle();
+                            bundleObject.putSerializable("competitorsList",(Serializable)competitors);
+                            nextIntent.putExtras(bundleObject);
+                            startActivity(nextIntent);
                         } else {
                             System.out.println("response failure");
                         }
@@ -190,7 +181,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
 
                 //startActivity(nextIntent);
                 // Temporary (for initial code demo)
-                openRemote();
+                //openRemote();
             }
         });
     }

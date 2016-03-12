@@ -1,9 +1,11 @@
 package com.gamefinder;
 
+import java.io.Serializable;
+
 /**
  * Created by Kevin on 3/7/2016.
  */
-public class CompetitorsResponse {
+public class CompetitorsResponse implements Serializable{
     private String id, league_id, name;
 
     public String getId ()
