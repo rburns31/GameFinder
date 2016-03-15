@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">GameFinder</string>
-    <string name="title_activity_sign_up">Sign Up</string>
 
     <string name="power">Power</string>
     <string name="channelUp">Channel Up</string>
@@ -21,5 +20,13 @@
     <string name="eight">8</string>
     <string name="nine">9</string>
     <string name="dash">-</string>
+
+    <string name="next">Next</string>
+
+    <string name="title_activity_sign_up">Sign Up</string>
     <string name="title_activity_league_interest">My League Interest</string>
+    <string name="title_activity_team_interest">My Team Interest</string>
+    <string name="title_activity_tv_setup">TV Setup</string>
+    <string name="title_activity_channels">Channels Setup</string>
+    <string name="title_activity_games_screen">Games</string>
 </resources>

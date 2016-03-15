@@ -3,7 +3,9 @@ package com.gamefinder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.lang.reflect.Array;
@@ -33,6 +35,14 @@ public class TeamInterestActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
+        Button nextButton = (Button) findViewById(R.id.nextButton);
+        final Intent nextIntent = new Intent(this, TvSetupActivity.class);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //nextIntent.putExtras(bundleObject);
+                startActivity(nextIntent);
+            }
+        });
     }
 }
