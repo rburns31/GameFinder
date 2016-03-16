@@ -40,7 +40,7 @@ public class TeamInterestActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //nextIntent.putExtras(bundleObject);
+                //nextIntent.putExtras();
                 startActivity(nextIntent);
             }
         });

@@ -10,11 +10,35 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".TvSetupActivity">
 
-    <ListView
-        android:id="@+id/league_listview"
-        android:layout_width="wrap_content"
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="40dp"
+            android:layout_above="@+id/tvBrandSpinner">
+            <EditText android:id="@+id/tvConfigName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/tvConfigName" />
+        </android.support.design.widget.TextInputLayout>
+
+    <Spinner
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/nextButton" />
+        android:layout_marginBottom="40dp"
+        android:id="@+id/tvBrandSpinner"
+        android:layout_above="@+id/cableSpinner"
+        android:spinnerMode="dialog"
+        android:entries="@array/spinnerItems"
+        android:prompt="@string/tvBrandPrompt"/>
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:id="@+id/cableSpinner"
+        android:layout_above="@+id/nextButton"
+        android:spinnerMode="dropdown"/>
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/nextButton"

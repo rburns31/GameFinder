@@ -106,6 +106,15 @@ public class LoginActivity extends AppCompatActivity {
                 });
             }
         });
+
+        System.out.println("========== Testing Rating Algorithm ==========");
+        System.out.println("[1, 1, 3, 3, false] => score");
+        System.out.println("[1, 1, 3, 3, false] => " + GameRatingAlgorithm.rateGame(1, 1, 3, 3, false));
+        System.out.println("[1, 0, 3, 3, false] => " + GameRatingAlgorithm.rateGame(1, 0, 3, 3, false));
+        System.out.println("[0, 1, 1, 1, false] => " + GameRatingAlgorithm.rateGame(0, 1, 3, 1, false));
+        System.out.println("[0, 0, 3, 3, false] => " + GameRatingAlgorithm.rateGame(0, 0, 3, 3, false));
+        System.out.println("[0, 0, 3, 3, true] => " + GameRatingAlgorithm.rateGame(0, 0, 3, 3, true));
+        System.out.println("========== Testing Rating Algorithm ==========");
     }
 
     private void openLeagues(Headers headers) {

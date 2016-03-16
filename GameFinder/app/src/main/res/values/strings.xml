@@ -29,4 +29,11 @@
     <string name="title_activity_tv_setup">TV Setup</string>
     <string name="title_activity_channels">Channels Setup</string>
     <string name="title_activity_games_screen">Games</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="noAccountPrompt">No account yet? Create one</string>
+    <string name="tvBrandPrompt">Tv Brand</string>
+    <string name="gamefinderLogo">GameFinder Logo</string>
+    <string name="tvConfigName">Tv Configuration Name</string>
 </resources>
