@@ -1,35 +1,19 @@
 package com.gamefinder;
 
-import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.media.Rating;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.RatingBar;
-import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Response;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -83,7 +67,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
                         leagues.add(responseBody.get(i).getName());
                         ids.add(Integer.parseInt(responseBody.get(i).getId())); //ids not used yet
                     }
-                    final ArrayAdapter<LeaguesResponse> adapter = new ListViewAdapter(thisActivity,
+                    final ArrayAdapter<LeaguesResponse> adapter = new LeagueListViewAdapter(thisActivity,
                             R.layout.item_listview, responseBody);
                     listView.setAdapter(adapter);
                     System.out.println(responseBody.toString());
@@ -179,7 +163,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
 
 
 
-                //startActivity(nextIntent);
+                startActivity(nextIntent);
                 // Temporary (for initial code demo)
                 //openRemote();
             }

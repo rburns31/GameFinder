@@ -17,12 +17,12 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class ListViewAdapter extends ArrayAdapter<LeaguesResponse> {
+public class LeagueListViewAdapter extends ArrayAdapter<LeaguesResponse> {
 
     private AppCompatActivity activity;
     private List<LeaguesResponse> leagueList;
 
-    public ListViewAdapter(AppCompatActivity context, int resource, List<LeaguesResponse> objects) {
+    public LeagueListViewAdapter(AppCompatActivity context, int resource, List<LeaguesResponse> objects) {
         super(context, resource, objects);
         this.activity = context;
         this.leagueList = objects;
