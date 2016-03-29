@@ -7,7 +7,7 @@ import java.util.HashMap;
  */
 public class GameRatingAlgorithm {
     /**
-     * Maps from each sport's name to the average score in that sport's matches
+     * Maps from each sport's name to the average margin in that sport's matches
      */
     public static final HashMap<String, Double> avgMargins;
     static {
@@ -25,6 +25,23 @@ public class GameRatingAlgorithm {
         avgMargins.put("MMA", 0.0);
     }
 
+    /**
+     * This method rates a game based on the parameters
+     * There is no distinction between team 1 and team 2, they are interchangeable
+     * Several of the parameters are not required depending on which sport is being rated, check the code to determine what is necessary for your sport
+     * @param sport The name of the sport
+     * @param team1Fav The favorite status of "team 1", [0, 1]
+     * @param team2Fav The favorite status of "team 2", [0, 1]
+     * @param sportFav The favorite status of the sport, [0, 1, 2, 3, 4]
+     * @param inProgress Whether or not the game is currently being played, [true, false]
+     * @param spread The spread/betting line for the margin of the game, used to judge closeness of games which have not yet started, no set range but make sure the input is positive
+     * @param margin The current margin of the game, used to judge closeness of games which have started, no set range but make sure the input is positive
+     * @param combinedWinPct The combined win percentage of the two teams, in range [0.0, 1.0]
+     * @param playoffMatch Whether or not the game is a playoff game, [true, false]
+     * @param ranking1 The ranking of team 1, only applicable in NCAA FB and NCAA BB, in range [1, 25]
+     * @param ranking2 The ranking of team 2, only applicable in NCAA FB and NCAA BB, in range [1, 25]
+     * @return
+     */
     public static int rateGame(String sport, int team1Fav, int team2Fav, int sportFav,
                                boolean inProgress, double spread, double margin,
                                double combinedWinPct, boolean playoffMatch,
