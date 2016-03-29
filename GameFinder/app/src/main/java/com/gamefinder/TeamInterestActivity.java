@@ -41,6 +41,9 @@ public class TeamInterestActivity extends AppCompatActivity {
         checkButtonClick();
 
         Intent intent = getIntent();
+        final String accessToken = intent.getStringExtra("accessToken");
+        final String client = intent.getStringExtra("client");
+        final String uid = intent.getStringExtra("uid");
 
         try {
             Bundle bundleObject = getIntent().getExtras();
@@ -79,6 +82,9 @@ public class TeamInterestActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //nextIntent.putExtras();
+                nextIntent.putExtra("accessToken", accessToken);
+                nextIntent.putExtra("client", client);
+                nextIntent.putExtra("uid", uid);
                 startActivity(nextIntent);
             }
         });
@@ -169,5 +175,4 @@ public class TeamInterestActivity extends AppCompatActivity {
         });
 
     }
-
 }

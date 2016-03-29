@@ -108,13 +108,22 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         System.out.println("========== Testing Rating Algorithm ==========");
-        System.out.println("[1, 1, 3, 3, false] => score");
-        System.out.println("[1, 1, 3, 3, false] => " + GameRatingAlgorithm.rateGame(1, 1, 3, 3, false));
-        System.out.println("[1, 0, 3, 3, false] => " + GameRatingAlgorithm.rateGame(1, 0, 3, 3, false));
-        System.out.println("[0, 1, 1, 1, false] => " + GameRatingAlgorithm.rateGame(0, 1, 3, 1, false));
-        System.out.println("[0, 0, 3, 3, false] => " + GameRatingAlgorithm.rateGame(0, 0, 3, 3, false));
-        System.out.println("[0, 0, 3, 3, true] => " + GameRatingAlgorithm.rateGame(0, 0, 3, 3, true));
+        System.out.println("[sport, team1Fav, team2Fav, sport1Fav, sport2Fav, inProgress, spread, margin] => score");
+        printRating("NBA", 1, 1, 3, 3, false, 0, 0);
+        printRating("NBA", 1, 0, 3, 3, false, 0, 0);
+        printRating("NBA", 0, 1, 3, 1, false, 0, 0);
+        printRating("NBA", 0, 0, 3, 3, false, 0, 0);
+        printRating("NBA", 0, 0, 3, 3, true, 0, 0);
         System.out.println("========== Testing Rating Algorithm ==========");
+    }
+
+    /**
+     * Method for printing out rating based on parameters, no use in application
+     */
+    private void printRating(String sport, int team1Fav, int team2Fav, int sport1Fav, int sport2Fav, boolean inProgress, double spread, double margin) {
+        System.out.printf("[%s, %d, %d, %d, %d, %b, %f, %f] => %d %n", sport, team1Fav, team2Fav,
+                sport1Fav, sport2Fav, inProgress, spread, margin,
+                GameRatingAlgorithm.rateGame(sport, team1Fav, team2Fav, sport1Fav, sport2Fav, inProgress, spread, margin));
     }
 
     private void openLeagues(Headers headers) {
@@ -122,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
         String accessToken = headers.get("Access-Token");
         String client = headers.get("Client");
         String uid = headers.get("UID");
-        intent.putExtra("accessToken",accessToken);
+        intent.putExtra("accessToken", accessToken);
         intent.putExtra("client", client);
         intent.putExtra("uid", uid);
         startActivity(intent);

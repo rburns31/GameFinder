@@ -22,12 +22,19 @@ public class ChannelsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channels);
 
+        Intent intent = getIntent();
+        final String accessToken = intent.getStringExtra("accessToken");
+        final String client = intent.getStringExtra("client");
+        final String uid = intent.getStringExtra("uid");
+
         Button nextButton = (Button) findViewById(R.id.nextButton);
         final Intent nextIntent = new Intent(this, GamesScreenActivity.class);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //nextIntent.putExtras(bundleObject);
+                nextIntent.putExtra("accessToken", accessToken);
+                nextIntent.putExtra("client", client);
+                nextIntent.putExtra("uid", uid);
                 startActivity(nextIntent);
             }
         });

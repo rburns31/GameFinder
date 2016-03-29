@@ -147,8 +147,11 @@ public class LeagueInterestActivity extends AppCompatActivity {
                                 }
                             }
                             Bundle bundleObject = new Bundle();
-                            bundleObject.putSerializable("competitorsList",(Serializable)competitors);
+                            bundleObject.putSerializable("competitorsList", (Serializable) competitors);
                             nextIntent.putExtras(bundleObject);
+                            nextIntent.putExtra("accessToken", accessToken);
+                            nextIntent.putExtra("client", client);
+                            nextIntent.putExtra("uid", uid);
                             startActivity(nextIntent);
                         } else {
                             System.out.println("response failure");

@@ -15,6 +15,11 @@ public class TvSetupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tv_setup);
 
+        Intent intent = getIntent();
+        final String accessToken = intent.getStringExtra("accessToken");
+        final String client = intent.getStringExtra("client");
+        final String uid = intent.getStringExtra("uid");
+
         Button nextButton = (Button) findViewById(R.id.nextButton);
         EditText tvConfigName = (EditText) findViewById(R.id.tvConfigName);
         Spinner tvBrandSpinner = (Spinner) findViewById(R.id.tvBrandSpinner);
@@ -24,7 +29,9 @@ public class TvSetupActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //nextIntent.putExtras(bundleObject);
+                nextIntent.putExtra("accessToken", accessToken);
+                nextIntent.putExtra("client", client);
+                nextIntent.putExtra("uid", uid);
                 startActivity(nextIntent);
             }
         });
