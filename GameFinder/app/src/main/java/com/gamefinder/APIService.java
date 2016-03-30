@@ -35,6 +35,8 @@ public interface APIService {
                                                    @Header("Client")String client,
                                                    @Header("UID")String uid);
 
+
+
     @Headers({"Token-Type: Bearer",
             "Content-Type: application/json"})
     @PUT("user/preferences")
@@ -52,7 +54,7 @@ public interface APIService {
     @Headers({"Token-Type: Bearer",
             "Content-Type: application/json"})
     @POST("user/channels")
-    Call<List<ChannelResponse>> postTelevisions(@Header("Access-Token")String accessToken,
+    Call<List<ChannelResponse>> postChannels(@Header("Access-Token")String accessToken,
                                                    @Header("Client")String client,
                                                    @Header("UID")String uid, @Body ChannelResponse television);
 
