@@ -99,7 +99,7 @@ public class TvSetupActivity extends AppCompatActivity {
                     call.enqueue(new Callback<List<TelevisionResponse>>() {
                         @Override
                         public void onResponse(Call<List<TelevisionResponse>> call, Response<List<TelevisionResponse>> response) {
-                            
+
                         }
 
                         @Override

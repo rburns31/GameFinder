@@ -49,4 +49,11 @@ public interface APIService {
                                              @Header("Client")String client,
                                              @Header("UID")String uid, @Body TelevisionBody television);
 
+    @Headers({"Token-Type: Bearer",
+            "Content-Type: application/json"})
+    @POST("user/channels")
+    Call<List<ChannelResponse>> postTelevisions(@Header("Access-Token")String accessToken,
+                                                   @Header("Client")String client,
+                                                   @Header("UID")String uid, @Body ChannelResponse television);
+
 }
