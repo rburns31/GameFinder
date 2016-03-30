@@ -42,7 +42,11 @@ public interface APIService {
                                                    @Header("Client")String client,
                                                    @Header("UID")String uid, @Body PreferenceBody preference);
 
+    @Headers({"Token-Type: Bearer",
+            "Content-Type: application/json"})
+    @POST("user/televisions")
+    Call<List<TelevisionResponse>> postTelevisions(@Header("Access-Token")String accessToken,
+                                             @Header("Client")String client,
+                                             @Header("UID")String uid, @Body TelevisionBody television);
 
-/*    @PUT("users/preferences")
-    Call<UserPreferencesResponse> preferences()*/
 }

@@ -148,7 +148,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
                             }
 
                             final Intent nextIntent;
-
+                            System.out.println("COMPETITORS SIZE: " + competitors.size());
                             if (competitors.size() == 0) {
                                 nextIntent = new Intent(LeagueInterestActivity.this,TvSetupActivity.class);
                             } else {

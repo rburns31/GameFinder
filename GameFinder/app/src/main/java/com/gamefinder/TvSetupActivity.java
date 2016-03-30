@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.Headers;
 import retrofit2.Call;
@@ -39,7 +40,7 @@ public class TvSetupActivity extends AppCompatActivity {
         final Button nextButton = (Button) findViewById(R.id.nextButton);
         final EditText tvConfigName = (EditText) findViewById(R.id.tvConfigName);
         final Spinner tvBrandSpinner = (Spinner) findViewById(R.id.tvBrandSpinner);
-        Spinner cableSpinner = (Spinner) findViewById(R.id.cableSpinner);
+        final Spinner cableSpinner = (Spinner) findViewById(R.id.cableSpinner);
 
         tvBrandSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -79,7 +80,7 @@ public class TvSetupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // If a tv config name and brand are input then save them on the server
-                /**if (nextButton.getText().toString().equals("Next")) {
+                if (nextButton.getText().toString().equals("Next")) {
                     final Retrofit retrofit = new Retrofit.Builder()
                             .baseUrl("https://fathomless-woodland-78351.herokuapp.com/api/")
                             .addConverterFactory(GsonConverterFactory.create())
@@ -87,51 +88,26 @@ public class TvSetupActivity extends AppCompatActivity {
 
                     final APIService service = retrofit.create(APIService.class);
 
-                    loginButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            User user = new User(email.getText().toString(), password.getText().toString());
-                            Call<LoginResponse> call = service.signIn(user);
-                            call.enqueue(new Callback<LoginResponse>() {
-                                @Override
-                                public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                                    int responseCode = response.code();
-                                    if (responseCode == 401) {
-                                        String errorMessage = "";
-                                        try {
-                                            LoginErrorResponse errorResponse
-                                                    = (LoginErrorResponse) retrofit.responseBodyConverter(
-                                                    LoginErrorResponse.class,
-                                                    LoginErrorResponse.class.getAnnotations())
-                                                    .convert(response.errorBody());
-                                            errorMessage = errorResponse.getErrors().get(0);
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                        AlertDialog alertDialog
-                                                = new AlertDialog.Builder(LoginActivity.this).create();
-                                        alertDialog.setTitle("Alert");
-                                        alertDialog.setMessage(errorMessage);
-                                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                                                new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.dismiss();
-                                                    }
-                                                });
-                                        alertDialog.show();
-                                    } else if (responseCode == 200) {
-                                        System.out.println("Success");
-                                    }
-                                }
+                    TelevisionBody televisionBody = new TelevisionBody();
+                    Television tv = new Television();
+                    tv.setName(tvConfigName.getText().toString());
+                    tv.setBrand(tvBrandSpinner.getSelectedItem().toString());
+                    tv.setCable_company(cableSpinner.getSelectedItem().toString());
+                    televisionBody.setTelevision(tv);
 
-                                @Override
-                                public void onFailure(Call<LoginResponse> call, Throwable t) {
-                                    System.out.println("Failure");
-                                }
-                            });
+                    Call<List<TelevisionResponse>> call = service.postTelevisions(accessToken,client,uid,televisionBody);
+                    call.enqueue(new Callback<List<TelevisionResponse>>() {
+                        @Override
+                        public void onResponse(Call<List<TelevisionResponse>> call, Response<List<TelevisionResponse>> response) {
+                            
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<TelevisionResponse>> call, Throwable t) {
+                            System.out.println("television response failure");
                         }
                     });
-                }*/
+                }
                 nextIntent.putExtra("accessToken", accessToken);
                 nextIntent.putExtra("client", client);
                 nextIntent.putExtra("uid", uid);
