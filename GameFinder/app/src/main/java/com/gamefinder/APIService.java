@@ -35,7 +35,12 @@ public interface APIService {
                                                    @Header("Client")String client,
                                                    @Header("UID")String uid);
 
-
+    @Headers({"Token-Type: Bearer",
+            "Content-Type: application/json"})
+    @GET("user/games")
+    Call<List<GamesResponse>> getGames(@Header("Access-Token")String accessToken,
+                                                   @Header("Client")String client,
+                                                   @Header("UID")String uid);
 
     @Headers({"Token-Type: Bearer",
             "Content-Type: application/json"})
