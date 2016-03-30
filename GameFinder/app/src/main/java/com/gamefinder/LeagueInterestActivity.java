@@ -146,6 +146,15 @@ public class LeagueInterestActivity extends AppCompatActivity {
                                     });*/
                                 }
                             }
+
+                            final Intent nextIntent;
+
+                            if (competitors.size() == 0) {
+                                nextIntent = new Intent(LeagueInterestActivity.this,TvSetupActivity.class);
+                            } else {
+                                nextIntent = new Intent(LeagueInterestActivity.this,TeamInterestActivity.class);
+                            }
+
                             Bundle bundleObject = new Bundle();
                             bundleObject.putSerializable("competitorsList", (Serializable) competitors);
                             nextIntent.putExtras(bundleObject);
@@ -165,8 +174,6 @@ public class LeagueInterestActivity extends AppCompatActivity {
                 });
 
 
-
-                startActivity(nextIntent);
                 // Temporary (for initial code demo)
                 //openRemote();
             }
