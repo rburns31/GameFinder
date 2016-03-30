@@ -22,6 +22,7 @@
     <string name="dash">-</string>
 
     <string name="next">Next</string>
+    <string name="skip">Skip</string>
 
     <string name="title_activity_sign_up">Sign Up</string>
     <string name="title_activity_league_interest">My League Interest</string>

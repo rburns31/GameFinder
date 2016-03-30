@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="spinnerItems">
+    <string-array name="tvBrands">
+        <item> None/Other </item>
         <item> Samsung </item>
         <item> Toshiba </item>
         <item> LG </item>
     </string-array>
-
+    <string-array name="cableBrands">
+        <item> None/Other </item>
+    </string-array>
 </resources>
