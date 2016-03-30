@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by Kevin on 3/7/2016.
  */
 public class CompetitorsResponse implements Serializable{
-    private String id, league_id, name;
+    private String id, league_id, name, league_name;
     private Boolean isSelected = false;
 
     public String getId ()
@@ -17,6 +17,16 @@ public class CompetitorsResponse implements Serializable{
     public void setId (String id)
     {
         this.id = id;
+    }
+
+    public String getLeagueName ()
+    {
+        return league_name;
+    }
+
+    public void setLeagueName (String league_name)
+    {
+        this.league_name = league_name;
     }
 
     public String getName ()

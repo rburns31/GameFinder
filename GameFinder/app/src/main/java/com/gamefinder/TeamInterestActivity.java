@@ -12,10 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +22,8 @@ import java.util.List;
 public class TeamInterestActivity extends AppCompatActivity {
     public final String BASE_URL = "https://fathomless-woodland-78351.herokuapp.com/api/";
     private ListView listView;
+    static List<List<CompetitorsResponse>> competitorsList;
     Button nextButton;
-    List<List<CompetitorsResponse>> competitors;
     List<CompetitorsResponse> teamList;
     MyCustomAdapter dataAdapter = null;
     static int currentLeagueLocation = 0;
@@ -38,6 +35,7 @@ public class TeamInterestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_interest);
         System.out.println(currentLeagueLocation);
+
         checkButtonClick();
 
         Intent intent = getIntent();
@@ -46,48 +44,57 @@ public class TeamInterestActivity extends AppCompatActivity {
         final String uid = intent.getStringExtra("uid");
 
         try {
-            Bundle bundleObject = getIntent().getExtras();
-            competitors = (List<List<CompetitorsResponse>>) bundleObject.getSerializable("competitorsList");
-            System.out.println(competitors.size());
+            if(competitorsList == null) {
+                Bundle bundleObject = getIntent().getExtras();
+                List<List<CompetitorsResponse>> competitors = (List<List<CompetitorsResponse>>) bundleObject.getSerializable("competitorsList");
+                competitorsList = competitors;
+                System.out.println("Competitors Size: " + competitors.size());
+            }
+
+            teamList = competitorsList.get(currentLeagueLocation);
+
+            //create an ArrayAdapter
+            dataAdapter = new MyCustomAdapter(this, R.layout.team_listview, teamList);
+            ListView listView = (ListView) findViewById(R.id.listviewteam);
+            // Assign adapter to ListView
+            listView.setAdapter(dataAdapter);
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    // When clicked, show a toast with the TextView text
+                    CompetitorsResponse team = (CompetitorsResponse) parent.getItemAtPosition(position);
+                    Toast.makeText(getApplicationContext(),
+                            "Clicked on Team: " + team.getName(),
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+
+            setTitle(competitorsList.get(currentLeagueLocation).get(0).getLeagueName());
+
+            final Intent nextIntent;
+            System.out.println("Current League Location: " + currentLeagueLocation);
+            System.out.println("Competitors List Size: " + competitorsList.size());
+            if(currentLeagueLocation < competitorsList.size()-1) {
+                currentLeagueLocation++;
+                nextIntent = new Intent(this,TeamInterestActivity.class);
+            } else {
+                nextIntent = new Intent(this, TvSetupActivity.class);
+            }
+
+            nextButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //nextIntent.putExtras();
+                    nextIntent.putExtra("accessToken", accessToken);
+                    nextIntent.putExtra("client", client);
+                    nextIntent.putExtra("uid", uid);
+                    startActivity(nextIntent);
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        teamList = competitors.get(currentLeagueLocation);
-
-        //create an ArrayAdapter
-        dataAdapter = new MyCustomAdapter(this, R.layout.team_listview, teamList);
-        ListView listView = (ListView) findViewById(R.id.listviewteam);
-        // Assign adapter to ListView
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // When clicked, show a toast with the TextView text
-                CompetitorsResponse team = (CompetitorsResponse) parent.getItemAtPosition(position);
-                Toast.makeText(getApplicationContext(),
-                        "Clicked on Team: " + team.getName(),
-                        Toast.LENGTH_LONG).show();
-            }
-        });
-
-        final Intent nextIntent;
-        if(currentLeagueLocation > competitors.size()) {
-            nextIntent = new Intent(this, TvSetupActivity.class);
-        } else {
-            currentLeagueLocation++;
-            nextIntent = new Intent(this,TeamInterestActivity.class);
-        }
-
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //nextIntent.putExtras();
-                nextIntent.putExtra("accessToken", accessToken);
-                nextIntent.putExtra("client", client);
-                nextIntent.putExtra("uid", uid);
-                startActivity(nextIntent);
-            }
-        });
     }
 
     private class MyCustomAdapter extends ArrayAdapter<CompetitorsResponse> {
@@ -102,7 +109,6 @@ public class TeamInterestActivity extends AppCompatActivity {
         }
 
         private class ViewHolder {
-            TextView teamName;
             CheckBox checkbox;
         }
 
@@ -117,7 +123,6 @@ public class TeamInterestActivity extends AppCompatActivity {
                 convertView = vi.inflate(R.layout.team_listview, null);
 
                 holder = new ViewHolder();
-                holder.teamName = (TextView) convertView.findViewById(R.id.team_name);
                 holder.checkbox = (CheckBox) convertView.findViewById(R.id.checkbox_interest);
                 convertView.setTag(holder);
 
@@ -138,7 +143,6 @@ public class TeamInterestActivity extends AppCompatActivity {
             }
 
             CompetitorsResponse team = teamList.get(position);
-            holder.teamName.setText(" (" +  team.getName() + ")");
             holder.checkbox.setText(team.getName());
             holder.checkbox.setChecked(team.getIsSelected());
             holder.checkbox.setTag(team);
