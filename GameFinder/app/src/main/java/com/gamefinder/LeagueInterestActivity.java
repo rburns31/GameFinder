@@ -88,7 +88,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Start the Team Interest Activity
+                // Start the Team Interest Activity
                 PreferenceAttributes[] attributes = new PreferenceAttributes[responseBody.size()];
                 leagueIDs = new int[responseBody.size()];
                 ratings = new int[leagueIDs.length];
@@ -109,7 +109,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
                 PreferenceBody preference = new PreferenceBody();
                 preference.setUser(user);
 
-                Call<List<PreferencesResponse>> call = service.putPreferences(accessToken,client,uid,preference);
+                Call<List<PreferencesResponse>> call = service.putPreferences(accessToken, client, uid, preference);
                 call.enqueue(new Callback<List<PreferencesResponse>>() {
                     @Override
                     public void onResponse(Call<List<PreferencesResponse>> call, retrofit2.Response<List<PreferencesResponse>> response) {
@@ -164,11 +164,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
                     }
                 });
 
-
-
                 startActivity(nextIntent);
-                // Temporary (for initial code demo)
-                //openRemote();
             }
         });
     }
@@ -193,9 +189,4 @@ public class LeagueInterestActivity extends AppCompatActivity {
             }
         };
     }*/
-
-    private void openRemote() {
-        Intent intent = new Intent(this, RemoteActivity.class);
-        startActivity(intent);
-    }
 }

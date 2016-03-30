@@ -9,4 +9,21 @@
     <string-array name="cableBrands">
         <item> None/Other </item>
     </string-array>
+    <string-array name="defaultChannels">
+        <item> ABC </item>
+        <item> NBC </item>
+        <item> CBS </item>
+        <item> FOX </item>
+        <item> TBS </item>
+        <item> TNT </item>
+        <item> NFLN </item>
+        <item> NBATV </item>
+        <item> MLBTV </item>
+        <item> ESPN </item>
+        <item> ESPN2 </item>
+        <item> ESPNU </item>
+        <item> CBSSN </item>
+        <item> NBCSN </item>
+        <item> GOLF </item>
+    </string-array>
 </resources>

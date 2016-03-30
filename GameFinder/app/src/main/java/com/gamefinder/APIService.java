@@ -20,6 +20,10 @@ public interface APIService {
     @POST("users/sign_in")
     Call<LoginResponse> signIn(@Body User user);
 
+    @POST("user/television")
+    Call<LoginResponse> postChannels(@Body User user,
+                                     @Body Channel channel);
+
     @POST("users")
     Call<SignUpResponse> signUp(@Body SignUpUser user);
 
