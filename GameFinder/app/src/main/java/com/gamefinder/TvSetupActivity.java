@@ -1,8 +1,6 @@
 package com.gamefinder;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,10 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import java.io.IOException;
 import java.util.List;
 
-import okhttp3.Headers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -75,7 +71,7 @@ public class TvSetupActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
 
-        final Intent nextIntent = new Intent(this, ChannelsActivity.class);
+        final Intent nextIntent = new Intent(this, ChannelActivity.class);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,7 +88,7 @@ public class TvSetupActivity extends AppCompatActivity {
                     Television tv = new Television();
                     tv.setName(tvConfigName.getText().toString());
                     tv.setBrand(tvBrandSpinner.getSelectedItem().toString());
-                    tv.setCable_company(cableSpinner.getSelectedItem().toString());
+                    tv.setCableCompany(cableSpinner.getSelectedItem().toString());
                     televisionBody.setTelevision(tv);
 
                     Call<List<TelevisionResponse>> call = service.postTelevisions(accessToken,client,uid,televisionBody);

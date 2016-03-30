@@ -1,8 +1,7 @@
 package com.gamefinder;
 
-import java.util.List;
-
 /**
+ *
  * Created by Kevin on 3/3/2016.
  */
 public class SignUpErrorResponse {

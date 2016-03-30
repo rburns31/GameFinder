@@ -3,6 +3,7 @@ package com.gamefinder;
 import java.util.List;
 
 /**
+ *
  * Created by Kevin on 3/3/2016.
  */
 public class LoginErrorResponse {
@@ -12,7 +13,7 @@ public class LoginErrorResponse {
         return errors;
     }
 
-    public List<String> setErrors(List<String> errors) {
-        return this.errors = errors;
+    public void setErrors(List<String> errors) {
+        this.errors = errors;
     }
 }

@@ -1,7 +1,5 @@
 package com.gamefinder;
 
-import android.preference.Preference;
-
 import java.util.List;
 
 import retrofit2.Call;
@@ -14,15 +12,12 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 /**
+ *
  * Created by Kevin on 2/26/2016.
  */
 public interface APIService {
     @POST("users/sign_in")
     Call<LoginResponse> signIn(@Body User user);
-
-    @POST("user/television")
-    Call<LoginResponse> postChannels(@Body User user,
-                                     @Body Channel channel);
 
     @POST("users")
     Call<SignUpResponse> signUp(@Body SignUpUser user);

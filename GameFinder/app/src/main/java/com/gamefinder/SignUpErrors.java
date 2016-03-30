@@ -3,16 +3,17 @@ package com.gamefinder;
 import java.util.List;
 
 /**
+ *
  * Created by Kevin on 3/3/2016.
  */
 public class SignUpErrors {
-    List<String> full_messages;
+    private List<String> fullMessages;
 
-    private List<String> getFullMessages() {
-        return full_messages;
+    public List<String> getFullMessages() {
+        return fullMessages;
     }
 
-    private List<String> setFullMessages(List<String> full_messages) {
-        return this.full_messages = full_messages;
+    public List<String> setFullMessages(List<String> fullMessages) {
+        return this.fullMessages = fullMessages;
     }
 }

@@ -69,7 +69,7 @@ public class SignUpActivity extends AppCompatActivity {
                                                 SignUpErrorResponse.class,
                                                 SignUpErrorResponse.class.getAnnotations())
                                         .convert(response.errorBody());
-                                errorMessage = errorResponse.getSignUpErrors().full_messages.get(0);
+                                errorMessage = errorResponse.getSignUpErrors().getFullMessages().get(0);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

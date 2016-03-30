@@ -15,19 +15,19 @@ import java.util.List;
 /**
  *
  */
-public class ChannelListViewAdapter extends ArrayAdapter<ChannelsResponse> {
+public class ChannelListViewAdapter extends ArrayAdapter<ChannelResponse> {
 
     private AppCompatActivity activity;
-    private List<ChannelsResponse> channelList;
+    private List<ChannelResponse> channelList;
 
-    public ChannelListViewAdapter(AppCompatActivity context, int resource, List<ChannelsResponse> objects) {
+    public ChannelListViewAdapter(AppCompatActivity context, int resource, List<ChannelResponse> objects) {
         super(context, resource, objects);
         this.activity = context;
         this.channelList = objects;
     }
 
     @Override
-    public ChannelsResponse getItem(int position) {
+    public ChannelResponse getItem(int position) {
         return channelList.get(position);
     }
 
@@ -50,7 +50,7 @@ public class ChannelListViewAdapter extends ArrayAdapter<ChannelsResponse> {
 
         holder.ratingBar.setTag(position);
         //holder.ratingBar.setRating(getItem(position).getRatingStar());
-        holder.leagueName.setText(getItem(position).getName());
+        //holder.leagueName.setText(getItem(position).getName());
 
         return convertView;
     }
@@ -59,7 +59,7 @@ public class ChannelListViewAdapter extends ArrayAdapter<ChannelsResponse> {
         return new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-                ChannelsResponse item = getItem(position);
+                ChannelResponse item = getItem(position);
                 //item.setRatingStar(v);
                 Log.i("Adapter", "star: " + v);
             }
