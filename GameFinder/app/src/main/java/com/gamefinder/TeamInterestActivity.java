@@ -13,8 +13,16 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Paul on 3/6/2016.
@@ -84,7 +92,51 @@ public class TeamInterestActivity extends AppCompatActivity {
             nextButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //nextIntent.putExtras();
+                    List<CompetitorsResponse> teamList = dataAdapter.teamList;
+                    ArrayList<Integer> competitorIDs = new ArrayList<Integer>();
+                    for(int i = 0; i < teamList.size(); i++){
+                        CompetitorsResponse team = teamList.get(i);
+                        if(team.getIsSelected()){
+                            competitorIDs.add(Integer.parseInt(team.getId()));
+                        }
+                    }
+                    PreferenceAttributes[] attributes = new PreferenceAttributes[competitorIDs.size()];
+                    for (int i = 0; i < attributes.length; i++) {
+                        PreferenceAttributes preferenceAttribute = new PreferenceAttributes();
+                        preferenceAttribute.setPreference_type("Competitor");
+                        preferenceAttribute.setPreference_id(competitorIDs.get(i));
+                        preferenceAttribute.setAmount(1);
+                        preferenceAttribute.setScale(2);
+                        attributes[i] = preferenceAttribute;
+                    }
+                    System.out.println("ATTRIBUTES LENGTH: " + attributes.length);
+                    PreferenceUser user = new PreferenceUser();
+                    user.setPreferences_attributes(attributes);
+                    PreferenceBody preference = new PreferenceBody();
+                    preference.setUser(user);
+
+                    final Retrofit retrofit = new Retrofit.Builder()
+                            .baseUrl(BASE_URL)
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build();
+
+                    final APIService service = retrofit.create(APIService.class);
+
+                    Call<List<PreferencesResponse>> call = service.putPreferences(accessToken,client,uid,preference);
+                    call.enqueue(new Callback<List<PreferencesResponse>>() {
+                        @Override
+                        public void onResponse(Call<List<PreferencesResponse>> call, retrofit2.Response<List<PreferencesResponse>> response) {
+                            if (response.isSuccess()) {
+                                System.out.println("successful team interest preferences call");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<PreferencesResponse>> call, Throwable t) {
+                            System.out.println(t.getMessage());
+                        }
+                    });
+
                     nextIntent.putExtra("accessToken", accessToken);
                     nextIntent.putExtra("client", client);
                     nextIntent.putExtra("uid", uid);

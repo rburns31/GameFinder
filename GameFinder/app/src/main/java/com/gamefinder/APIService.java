@@ -41,12 +41,30 @@ public interface APIService {
 
     @Headers({"Token-Type: Bearer",
             "Content-Type: application/json"})
+    @GET("user/games")
+    Call<List<GamesResponse>> getGames(@Header("Access-Token")String accessToken,
+                                                   @Header("Client")String client,
+                                                   @Header("UID")String uid);
+
+    @Headers({"Token-Type: Bearer",
+            "Content-Type: application/json"})
     @PUT("user/preferences")
     Call<List<PreferencesResponse>> putPreferences(@Header("Access-Token")String accessToken,
                                                    @Header("Client")String client,
                                                    @Header("UID")String uid, @Body PreferenceBody preference);
 
+    @Headers({"Token-Type: Bearer",
+            "Content-Type: application/json"})
+    @POST("user/televisions")
+    Call<List<TelevisionResponse>> postTelevisions(@Header("Access-Token")String accessToken,
+                                             @Header("Client")String client,
+                                             @Header("UID")String uid, @Body TelevisionBody television);
 
-/*    @PUT("users/preferences")
-    Call<UserPreferencesResponse> preferences()*/
+    @Headers({"Token-Type: Bearer",
+            "Content-Type: application/json"})
+    @POST("user/channels")
+    Call<List<ChannelResponse>> postChannels(@Header("Access-Token")String accessToken,
+                                                   @Header("Client")String client,
+                                                   @Header("UID")String uid, @Body ChannelResponse television);
+
 }

@@ -53,7 +53,7 @@ public class ChannelsActivity extends AppCompatActivity {
         final ArrayList<String> channels = new ArrayList<>();
         final AppCompatActivity thisActivity = this;
 
-        Call<List<ChannelsResponse>> call = service.postChannels(accessToken, client, uid);
+       /** Call<List<ChannelsResponse>> call = service.postChannels(accessToken, client, uid);
         call.enqueue(new Callback<List<ChannelsResponse>>() {
             @Override
             public void onResponse(Call<List<ChannelsResponse>> call, retrofit2.Response<List<ChannelsResponse>> response) {
@@ -76,7 +76,7 @@ public class ChannelsActivity extends AppCompatActivity {
             public void onFailure(Call<List<ChannelsResponse>> call, Throwable t) {
                 System.out.println(t.getMessage());
             }
-        });
+        });*/
 
 
 

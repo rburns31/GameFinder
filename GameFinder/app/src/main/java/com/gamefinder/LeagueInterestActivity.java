@@ -146,6 +146,15 @@ public class LeagueInterestActivity extends AppCompatActivity {
                                     });*/
                                 }
                             }
+
+                            final Intent nextIntent;
+                            System.out.println("COMPETITORS SIZE: " + competitors.size());
+                            if (competitors.size() == 0) {
+                                nextIntent = new Intent(LeagueInterestActivity.this,TvSetupActivity.class);
+                            } else {
+                                nextIntent = new Intent(LeagueInterestActivity.this,TeamInterestActivity.class);
+                            }
+
                             Bundle bundleObject = new Bundle();
                             bundleObject.putSerializable("competitorsList", (Serializable) competitors);
                             nextIntent.putExtras(bundleObject);
