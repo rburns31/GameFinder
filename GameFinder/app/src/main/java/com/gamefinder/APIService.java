@@ -1,7 +1,5 @@
 package com.gamefinder;
 
-import android.preference.Preference;
-
 import java.util.List;
 
 import retrofit2.Call;
@@ -14,6 +12,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 /**
+ *
  * Created by Kevin on 2/26/2016.
  */
 public interface APIService {
@@ -65,6 +64,6 @@ public interface APIService {
     @POST("user/channels")
     Call<List<ChannelResponse>> postChannels(@Header("Access-Token")String accessToken,
                                                    @Header("Client")String client,
-                                                   @Header("UID")String uid, @Body ChannelResponse television);
+                                                   @Header("UID")String uid, @Body ChannelResponse channels);
 
 }

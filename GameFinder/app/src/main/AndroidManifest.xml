@@ -31,6 +31,7 @@
         </activity>
         <activity
             android:name=".RemoteActivity"
+            android:label="@string/title_activity_remote"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light">
         </activity>

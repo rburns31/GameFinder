@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -15,19 +16,18 @@ import java.util.List;
 /**
  *
  */
-public class ChannelListViewAdapter extends ArrayAdapter<ChannelsResponse> {
-
+public class ChannelListViewAdapter extends ArrayAdapter<Channel> {
     private AppCompatActivity activity;
-    private List<ChannelsResponse> channelList;
+    private List<Channel> channelList;
 
-    public ChannelListViewAdapter(AppCompatActivity context, int resource, List<ChannelsResponse> objects) {
-        super(context, resource, objects);
-        this.activity = context;
-        this.channelList = objects;
+    public ChannelListViewAdapter(AppCompatActivity activity, int resource, List<Channel> channelList) {
+        super(activity, resource, channelList);
+        this.activity = activity;
+        this.channelList = channelList;
     }
 
     @Override
-    public ChannelsResponse getItem(int position) {
+    public Channel getItem(int position) {
         return channelList.get(position);
     }
 
@@ -37,7 +37,7 @@ public class ChannelListViewAdapter extends ArrayAdapter<ChannelsResponse> {
         LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.item_listview, parent, false);
+            convertView = inflater.inflate(R.layout.channel_listview, parent, false);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
 
@@ -46,33 +46,33 @@ public class ChannelListViewAdapter extends ArrayAdapter<ChannelsResponse> {
             //holder.ratingBar.getTag(position);
         }
 
-        holder.ratingBar.setOnRatingBarChangeListener(onRatingChangedListener(holder, position));
+        //holder.ratingBar.setOnRatingBarChangeListener(onRatingChangedListener(holder, position));
 
-        holder.ratingBar.setTag(position);
-        //holder.ratingBar.setRating(getItem(position).getRatingStar());
-        holder.leagueName.setText(getItem(position).getName());
+        //holder.ratingBar.setTag(position);
+        //holder.channelNumberField.setRating(getItem(position).getRatingStar());
+        holder.channelName.setText(getItem(position).getChannelAcronym());
 
         return convertView;
     }
 
-    private RatingBar.OnRatingBarChangeListener onRatingChangedListener(final ViewHolder holder, final int position) {
+    /**private RatingBar.OnRatingBarChangeListener onRatingChangedListener(final ViewHolder holder, final int position) {
         return new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-                ChannelsResponse item = getItem(position);
+                Channel item = getItem(position);
                 //item.setRatingStar(v);
                 Log.i("Adapter", "star: " + v);
             }
         };
-    }
+    }*/
 
     private static class ViewHolder {
-        private RatingBar ratingBar;
-        private TextView leagueName;
+        private EditText channelNumberField;
+        private TextView channelName;
 
         public ViewHolder(View view) {
-            ratingBar = (RatingBar) view.findViewById(R.id.rate_img);
-            leagueName = (TextView) view.findViewById(R.id.league_name);
+            channelNumberField = (EditText) view.findViewById(R.id.channelNumberField);
+            channelName = (TextView) view.findViewById(R.id.channelName);
         }
     }
 }

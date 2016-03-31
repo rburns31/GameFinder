@@ -25,6 +25,7 @@
     <string name="skip">Skip</string>
 
     <string name="title_activity_sign_up">Sign Up</string>
+    <string name="title_activity_remote">Remote</string>
     <string name="title_activity_league_interest">My League Interest</string>
     <string name="title_activity_team_interest">My Team Interest</string>
     <string name="title_activity_tv_setup">TV Setup</string>

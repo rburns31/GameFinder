@@ -67,7 +67,7 @@ public class TeamInterestActivity extends AppCompatActivity {
             // Assign adapter to ListView
             listView.setAdapter(dataAdapter);
 
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            /**listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // When clicked, show a toast with the TextView text
                     CompetitorsResponse team = (CompetitorsResponse) parent.getItemAtPosition(position);
@@ -75,7 +75,7 @@ public class TeamInterestActivity extends AppCompatActivity {
                             "Clicked on Team: " + team.getName(),
                             Toast.LENGTH_LONG).show();
                 }
-            });
+            });*/
 
             setTitle(competitorsList.get(currentLeagueLocation).get(0).getLeagueName());
 
@@ -179,10 +179,10 @@ public class TeamInterestActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         CheckBox cb = (CheckBox) v;
                         CompetitorsResponse team = (CompetitorsResponse) cb.getTag();
-                        Toast.makeText(getApplicationContext(),
+                        /**Toast.makeText(getApplicationContext(),
                                 "Clicked on Checkbox: " + cb.getText() +
                                         " is " + cb.isChecked(),
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG).show();*/
                         team.setIsSelected(cb.isChecked());
                     }
                 });
@@ -216,7 +216,7 @@ public class TeamInterestActivity extends AppCompatActivity {
                         responseText.append("\n" + team.getName()); //send to database here
                     }
                 }
-                Toast.makeText(getApplicationContext(), responseText, Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), responseText, Toast.LENGTH_LONG).show();
             }
         });
     }
