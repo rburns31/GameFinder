@@ -38,4 +38,6 @@
     <string name="tvBrandPrompt">Tv Brand</string>
     <string name="gamefinderLogo">GameFinder Logo</string>
     <string name="tvConfigName">Tv Configuration Name</string>
+    <string name="gameName">Game Name</string>
+    <string name="gameDescription">Game Description</string>
 </resources>
