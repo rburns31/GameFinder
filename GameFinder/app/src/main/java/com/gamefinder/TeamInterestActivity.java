@@ -14,9 +14,8 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -25,17 +24,17 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
+ *
  * Created by Paul on 3/6/2016.
  */
 public class TeamInterestActivity extends AppCompatActivity {
     public final String BASE_URL = "https://fathomless-woodland-78351.herokuapp.com/api/";
-    private ListView listView;
+    //private ListView listView;
     static List<List<CompetitorsResponse>> competitorsList;
     Button nextButton;
     List<CompetitorsResponse> teamList;
     MyCustomAdapter dataAdapter = null;
     static int currentLeagueLocation = 0;
-
 
     @Override
     @SuppressWarnings("unchecked")
@@ -52,7 +51,7 @@ public class TeamInterestActivity extends AppCompatActivity {
         final String uid = intent.getStringExtra("uid");
 
         try {
-            if(competitorsList == null) {
+            if (competitorsList == null) {
                 Bundle bundleObject = getIntent().getExtras();
                 List<List<CompetitorsResponse>> competitors = (List<List<CompetitorsResponse>>) bundleObject.getSerializable("competitorsList");
                 competitorsList = competitors;
@@ -60,8 +59,9 @@ public class TeamInterestActivity extends AppCompatActivity {
             }
 
             teamList = competitorsList.get(currentLeagueLocation);
+            Collections.sort(teamList);
 
-            //create an ArrayAdapter
+            // Create an ArrayAdapter
             dataAdapter = new MyCustomAdapter(this, R.layout.team_listview, teamList);
             ListView listView = (ListView) findViewById(R.id.listviewteam);
             // Assign adapter to ListView
@@ -146,17 +146,15 @@ public class TeamInterestActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     private class MyCustomAdapter extends ArrayAdapter<CompetitorsResponse> {
-
         private List<CompetitorsResponse> teamList;
 
         public MyCustomAdapter(Context context, int textViewResourceId,
                                List<CompetitorsResponse> teamList) {
             super(context, textViewResourceId, teamList);
-            this.teamList = new ArrayList<CompetitorsResponse>();
+            this.teamList = new ArrayList<>();
             this.teamList.addAll(teamList);
         }
 
@@ -166,7 +164,6 @@ public class TeamInterestActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-
             ViewHolder holder = null;
 
             if (convertView == null) {
@@ -189,8 +186,7 @@ public class TeamInterestActivity extends AppCompatActivity {
                         team.setIsSelected(cb.isChecked());
                     }
                 });
-            }
-            else {
+            } else {
                 holder = (ViewHolder) convertView.getTag();
             }
 
@@ -200,13 +196,10 @@ public class TeamInterestActivity extends AppCompatActivity {
             holder.checkbox.setTag(team);
 
             return convertView;
-
         }
-
     }
 
     private void checkButtonClick() {
-
         nextButton = (Button) findViewById(R.id.teamNextButton);
         nextButton.setOnClickListener(new View.OnClickListener() {
 
@@ -217,18 +210,14 @@ public class TeamInterestActivity extends AppCompatActivity {
                 responseText.append("The following were selected...\n");
 
                 List<CompetitorsResponse> teamList = dataAdapter.teamList;
-                for(int i = 0; i < teamList.size(); i++){
+                for (int i = 0; i < teamList.size(); i++) {
                     CompetitorsResponse team = teamList.get(i);
-                    if(team.getIsSelected()){
+                    if (team.getIsSelected()) {
                         responseText.append("\n" + team.getName()); //send to database here
                     }
                 }
-
-                Toast.makeText(getApplicationContext(),
-                        responseText, Toast.LENGTH_LONG).show();
-
+                Toast.makeText(getApplicationContext(), responseText, Toast.LENGTH_LONG).show();
             }
         });
-
     }
 }
