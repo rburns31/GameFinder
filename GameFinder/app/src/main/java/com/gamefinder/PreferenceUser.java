@@ -1,17 +1,18 @@
 package com.gamefinder;
 
 /**
- *
  * Created by Kevin on 3/7/2016.
  */
 public class PreferenceUser {
-    private PreferenceAttributes[] preferencesAttributes;
+    private PreferenceAttributes[] preferences_attributes;
 
-    public PreferenceAttributes[] getPreferencesAttributes() {
-        return preferencesAttributes;
+    public PreferenceAttributes[] getPreferences_attributes ()
+    {
+        return preferences_attributes;
     }
 
-    public void setPreferencesAttributes(PreferenceAttributes[] preferencesAttributes) {
-        this.preferencesAttributes = preferencesAttributes;
+    public void setPreferences_attributes (PreferenceAttributes[] preferences_attributes)
+    {
+        this.preferences_attributes = preferences_attributes;
     }
 }

@@ -1,9 +1,9 @@
 package com.gamefinder;
 
 import java.util.List;
+import java.util.Map;
 
 /**
- *
  * Created by Kevin on 2/26/2016.
  */
 public class LoginResponse {
@@ -13,7 +13,7 @@ public class LoginResponse {
         return errors;
     }
 
-    public void setErrors(List<String> errors) {
-        this.errors = errors;
+    public List<String> setErrors(List<String> errors) {
+        return this.errors = errors;
     }
 }

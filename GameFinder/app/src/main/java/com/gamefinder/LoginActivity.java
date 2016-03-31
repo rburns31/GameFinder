@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.Headers;
 import retrofit2.Call;
@@ -22,6 +23,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Header;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -104,6 +106,34 @@ public class LoginActivity extends AppCompatActivity {
                 });
             }
         });
+
+        System.out.println("========== Testing Rating Algorithm ==========");
+        System.out.println("[sport, team1Fav, team2Fav, sportFav, inProgress, spread, margin, " +
+                "combinedWinPct, Boolean.toString(playoffMatch), ranking1, ranking2] => score");
+        printRating("NBA", 1, 1, 3, false, 0, 0, 0.5, false, 0, 0);
+        printRating("NBA", 1, 0, 3, false, 0, 0, 0.5, false, 0, 0);
+        printRating("NBA", 0, 1, 3, false, 0, 0, 0.5, false, 0, 0);
+        printRating("NBA", 0, 0, 3, false, 0, 0, 0.5, false, 0, 0);
+        printRating("NBA", 0, 0, 3, true, 0, 0, 0.5, false, 0, 0);
+        printRating("PGA", 0, 0, 2, true, 0, 0, 0.5, false, 0, 0);
+        printRating("NBA", 0, 0, 3, true, 0, 0, 0.5, false, 0, 0);
+        printRating("NCAA Football", 4, 7, 3, true, 0, 0, 0.9, false, 3, 9);
+        printRating("NBA", 0, 0, 3, true, 0, 0, 0.5, false, 0, 0);
+        System.out.println("========== Testing Rating Algorithm ==========");
+    }
+
+    /**
+     * Method for printing out rating based on parameters, no use in application
+     */
+    private void printRating(String sport, int team1Fav, int team2Fav, int sportFav,
+                             boolean inProgress, double spread, double margin,
+                             double combinedWinPct, boolean playoffMatch,
+                             int ranking1, int ranking2) {
+
+        System.out.printf("[%s, %d, %d, %d, %s, %f, %f, %f, %s, %d, %d] => %d %n",
+                sport, team1Fav, team2Fav, sportFav, Boolean.toString(inProgress), spread,
+                margin, combinedWinPct, Boolean.toString(playoffMatch), ranking1, ranking2,
+                GameRatingAlgorithm.rateGame(sport, team1Fav, team2Fav, sportFav, inProgress, spread, margin, combinedWinPct, playoffMatch, ranking1, ranking2));
     }
 
     private void openLeagues(Headers headers) {

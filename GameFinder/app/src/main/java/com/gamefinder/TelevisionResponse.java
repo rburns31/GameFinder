@@ -1,44 +1,55 @@
 package com.gamefinder;
 
 /**
- *
  * Created by Kevin on 3/30/2016.
  */
 public class TelevisionResponse {
     private String id;
+
     private String name;
-    private String cableCompany;
+
+    private String cable_company;
+
     private String brand;
 
-    public String getId() {
+    public String getId ()
+    {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId (String id)
+    {
         this.id = id;
     }
 
-    public String getName() {
+    public String getName ()
+    {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName (String name)
+    {
         this.name = name;
     }
 
-    public String getCableCompany() {
-        return cableCompany;
+    public String getCable_company ()
+    {
+        return cable_company;
     }
 
-    public void setCableCompany(String cableCompany) {
-        this.cableCompany = cableCompany;
+    public void setCable_company (String cable_company)
+    {
+        this.cable_company = cable_company;
     }
 
-    public String getBrand() {
+    public String getBrand ()
+    {
         return brand;
     }
 
-    public void setBrand(String brand) {
+    public void setBrand (String brand)
+    {
         this.brand = brand;
     }
+
 }

@@ -19,19 +19,16 @@ import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- *
- */
 public class LeagueInterestActivity extends AppCompatActivity {
+
     public final String BASE_URL = "https://fathomless-woodland-78351.herokuapp.com/api/";
     private ListView listView;
-    //ArrayAdapter<String> adapter;
+    ArrayAdapter<String> adapter;
     AppCompatActivity thisActivity = this;
     ArrayList<String> leagues;
     ArrayList<Integer> ids;
     List<LeaguesResponse> responseBody;
-    int[] leagueIDs;
-    int[] ratings;
+    int[] leagueIDs, ratings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +54,8 @@ public class LeagueInterestActivity extends AppCompatActivity {
 
         final APIService service = retrofit.create(APIService.class);
 
-        leagues = new ArrayList<>();
-        ids = new ArrayList<>();
+        leagues = new ArrayList<String>();
+        ids = new ArrayList<Integer>();
 
         Call<List<LeaguesResponse>> call = service.getLeagues(accessToken, client, uid);
         call.enqueue(new Callback<List<LeaguesResponse>>() {
@@ -101,14 +98,14 @@ public class LeagueInterestActivity extends AppCompatActivity {
                     Float ratingStar = responseBody.get(i).getRatingStar();
                     ratings[i] = ratingStar.intValue();
                     PreferenceAttributes preferenceAttribute = new PreferenceAttributes();
-                    preferenceAttribute.setPreferenceType("League");
-                    preferenceAttribute.setPreferenceId(id);
+                    preferenceAttribute.setPreference_type("League");
+                    preferenceAttribute.setPreference_id(id);
                     preferenceAttribute.setAmount(ratingStar.intValue());
                     preferenceAttribute.setScale(5);
                     attributes[i] = preferenceAttribute;
                 }
                 PreferenceUser user = new PreferenceUser();
-                user.setPreferencesAttributes(attributes);
+                user.setPreferences_attributes(attributes);
                 PreferenceBody preference = new PreferenceBody();
                 preference.setUser(user);
 

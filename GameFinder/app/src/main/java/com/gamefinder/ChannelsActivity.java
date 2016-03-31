@@ -21,7 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  *
  */
-public class ChannelActivity extends AppCompatActivity {
+public class ChannelsActivity extends AppCompatActivity {
     /**
      * Maps from the channel's acronym to the user inputted channel number for that channel
      */
@@ -53,17 +53,17 @@ public class ChannelActivity extends AppCompatActivity {
         final ArrayList<String> channels = new ArrayList<>();
         final AppCompatActivity thisActivity = this;
 
-       /** Call<List<ChannelResponse>> call = service.postChannels(accessToken, client, uid);
-        call.enqueue(new Callback<List<ChannelResponse>>() {
+       /** Call<List<ChannelsResponse>> call = service.postChannels(accessToken, client, uid);
+        call.enqueue(new Callback<List<ChannelsResponse>>() {
             @Override
-            public void onResponse(Call<List<ChannelResponse>> call, retrofit2.Response<List<ChannelResponse>> response) {
+            public void onResponse(Call<List<ChannelsResponse>> call, retrofit2.Response<List<ChannelsResponse>> response) {
                 if (response.isSuccess()) {
-                    List<ChannelResponse> responseBody = response.body();
+                    List<ChannelsResponse> responseBody = response.body();
                     for (int i = 0; i < responseBody.size(); i++) {
                         channels.add(responseBody.get(i).getName());
                         //ids.add(Integer.parseInt(responseBody.get(i).getId())); //ids not used yet
                     }
-                    final ArrayAdapter<ChannelResponse> adapter = new ChannelListViewAdapter(
+                    final ArrayAdapter<ChannelsResponse> adapter = new ChannelListViewAdapter(
                             thisActivity, R.layout.channel_listview, responseBody);
                     listView.setAdapter(adapter);
                     System.out.println(responseBody.toString());
@@ -73,7 +73,7 @@ public class ChannelActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<ChannelResponse>> call, Throwable t) {
+            public void onFailure(Call<List<ChannelsResponse>> call, Throwable t) {
                 System.out.println(t.getMessage());
             }
         });*/
