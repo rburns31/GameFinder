@@ -33,7 +33,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.gameName.setText(gamesList.get(position).getCompetitor_1().getName() + " vs " + gamesList.get(position).getCompetitor_2().getName());
-        holder.gameDescription.setText("Start Time: " + gamesList.get(position).getStart_time() + " on " + gamesList.get(position).getNetwork() + " Rating: " + gamesList.get(position).getScore());
+        if(gamesList.get(position).getNetwork() == null) {
+            holder.gameDescription.setText("Start Time: " + gamesList.get(position).getStart_time() + ", Unavailable " + " Rating: " + gamesList.get(position).getScore());
+        } else {
+            holder.gameDescription.setText("Start Time: " + gamesList.get(position).getStart_time() + ", on " + gamesList.get(position).getNetwork() + " Rating: " + gamesList.get(position).getScore());
+            //System.out.println(gamesList.get(position).getNetwork());
+        }
     }
 
     @Override
