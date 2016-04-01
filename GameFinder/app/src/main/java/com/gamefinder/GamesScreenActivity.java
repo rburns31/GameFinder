@@ -34,7 +34,6 @@ public class GamesScreenActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         try {
-
             Intent intent = getIntent();
             final String accessToken = intent.getStringExtra("accessToken");
             final String client = intent.getStringExtra("client");
@@ -65,9 +64,6 @@ public class GamesScreenActivity extends AppCompatActivity {
                     System.out.println(t.getMessage());
                 }
             });
-
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }

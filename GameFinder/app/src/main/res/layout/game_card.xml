@@ -1,7 +1,7 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
-    android:layout_height="380dp"
+    android:layout_height="280dp"
     android:layout_margin="8dp">
 
     <RelativeLayout
@@ -9,24 +9,34 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/thumbnail"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:id="@+id/thumbnail1"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
             android:layout_alignParentTop="true"
             android:scaleType="centerCrop"
-            android:src="@drawable/sports_background" />
+            android:contentDescription="@string/gameImage" />
+            <!-- android:src="@drawable/sports_background" /> -->
+
+        <ImageView
+            android:id="@+id/thumbnail2"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/gameImage"
+            android:layout_toRightOf="@+id/thumbnail1" />
 
         <TextView
             android:id="@+id/gameName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/thumbnail"
+            android:layout_below="@+id/thumbnail1"
             android:maxLines="3"
             android:padding="8dp"
             android:text="@string/gameName"
             android:textColor="#222"
             android:textStyle="bold"
-            android:textSize="22dp" />
+            android:textSize="22sp" />
 
         <TextView
             android:id="@+id/gameDescription"
@@ -37,7 +47,7 @@
             android:padding="8dp"
             android:text="@string/gameDescription"
             android:textColor="#666"
-            android:textSize="14dp" />
+            android:textSize="14sp" />
 
     </RelativeLayout>
 </android.support.v7.widget.CardView>

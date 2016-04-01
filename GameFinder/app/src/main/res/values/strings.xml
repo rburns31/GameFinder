@@ -40,4 +40,5 @@
     <string name="tvConfigName">Tv Configuration Name</string>
     <string name="gameName">Game Name</string>
     <string name="gameDescription">Game Description</string>
+    <string name="gameImage">Game Image</string>
 </resources>
