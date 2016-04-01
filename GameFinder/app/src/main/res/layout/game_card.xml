@@ -1,7 +1,7 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
-    android:layout_height="280dp"
+    android:layout_height="310dp"
     android:layout_margin="8dp">
 
     <RelativeLayout
@@ -10,16 +10,15 @@
 
         <ImageView
             android:id="@+id/thumbnail1"
-            android:layout_width="wrap_content"
+            android:layout_width="172dp"
             android:layout_height="150dp"
             android:layout_alignParentTop="true"
             android:scaleType="centerCrop"
             android:contentDescription="@string/gameImage" />
-            <!-- android:src="@drawable/sports_background" /> -->
 
         <ImageView
             android:id="@+id/thumbnail2"
-            android:layout_width="wrap_content"
+            android:layout_width="172dp"
             android:layout_height="150dp"
             android:layout_alignParentTop="true"
             android:scaleType="centerCrop"
@@ -39,15 +38,52 @@
             android:textSize="22sp" />
 
         <TextView
-            android:id="@+id/gameDescription"
+            android:id="@+id/gameLeague"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/gameName"
             android:maxLines="3"
-            android:padding="8dp"
-            android:text="@string/gameDescription"
+            android:text="@string/gameLeague"
             android:textColor="#666"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:paddingLeft="8dp" />
+
+        <TextView
+            android:id="@+id/gameRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/gameLeague"
+            android:maxLines="3"
+            android:text="@string/gameRating"
+            android:textColor="#666"
+            android:textSize="14sp"
+            android:paddingLeft="8dp" />
+
+        <TextView
+            android:id="@+id/gameStartTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="3"
+            android:text="@string/gameStartTime"
+            android:textColor="#666"
+            android:textSize="14sp"
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/gameRating"
+            android:paddingLeft="8dp" />
+
+        <TextView
+            android:id="@+id/gameNetwork"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="3"
+            android:text="@string/gameNetwork"
+            android:textColor="#666"
+            android:textSize="14sp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/gameStartTime"
+            android:paddingLeft="8dp" />
 
     </RelativeLayout>
 </android.support.v7.widget.CardView>
