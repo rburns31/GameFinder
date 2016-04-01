@@ -7,7 +7,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import retrofit2.Call;
@@ -21,6 +28,7 @@ public class GamesScreenActivity extends AppCompatActivity {
     public final String BASE_URL = "https://fathomless-woodland-78351.herokuapp.com/api/";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
+    private AppCompatActivity thisActivity = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +57,47 @@ public class GamesScreenActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<List<GamesResponse>> call, Response<List<GamesResponse>> response) {
                     if (response.isSuccess()) {
-                        List<GamesResponse> responseBody = response.body();
-                        System.out.println("GamesResponse Size: " + responseBody.size());
+                        final List<GamesResponse> responseBody = response.body();
+                        final List<GamesResponse> gamesToDisplay = new ArrayList<>();
 
-                        adapter = new RecyclerAdapter(responseBody);
+                        ArrayList<String> leaguesPresent = new ArrayList<>();
+                        leaguesPresent.add("All");
+                        for (GamesResponse game: responseBody) {
+                            if (!leaguesPresent.contains(game.getLeague().getName())) {
+                                leaguesPresent.add(game.getLeague().getName());
+                            }
+                        }
+                        System.out.println("GamesResponse Size: " + responseBody.size());
+                        System.out.println("Number of leagues present: " + Integer.toString(leaguesPresent.size() - 1));
+
+                        Spinner leaguesSpinner = (Spinner) findViewById(R.id.leaguesSpinner);
+                        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
+                                thisActivity, android.R.layout.simple_spinner_item, leaguesPresent);
+                        leaguesSpinner.setAdapter(spinnerAdapter);
+                        leaguesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                TextView selected = (TextView) view;
+                                System.out.println(selected.getText().toString());
+                                if (!selected.getText().toString().equals("All")) {
+                                    gamesToDisplay.clear();
+                                    for (GamesResponse game: responseBody) {
+                                        if (game.getLeague().getName().equals(selected.getText().toString())) {
+                                            gamesToDisplay.add(game);
+                                        }
+                                    }
+                                    adapter = new RecyclerAdapter(gamesToDisplay);
+                                } else {
+                                    adapter = new RecyclerAdapter(responseBody);
+                                }
+                                recyclerView.setAdapter(adapter);
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parentView) { }
+                        });
+
+                        adapter = new RecyclerAdapter(gamesToDisplay);
                         recyclerView.setAdapter(adapter);
                     }
                 }

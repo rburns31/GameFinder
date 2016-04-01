@@ -1,13 +1,12 @@
 package com.gamefinder;
 
 /**
+ *
  * Created by Kevin on 3/30/2016.
  */
-public class Competitor_2 {
+public class Competitor {
     private String id;
-
     private String name;
-
     private String league_id;
 
     public String getId ()

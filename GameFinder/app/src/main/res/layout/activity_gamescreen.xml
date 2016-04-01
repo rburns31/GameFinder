@@ -7,6 +7,13 @@
     android:layout_height="match_parent"
     tools:context=".GameScreenActivity">
 
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/leaguesSpinner"
+        android:padding="8dp"
+        android:spinnerMode="dialog" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:scrollbars="vertical"
