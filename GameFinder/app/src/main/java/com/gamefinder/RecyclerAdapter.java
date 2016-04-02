@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.Date;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -103,7 +102,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         String gameNameText = team1 + " vs. " + team2;
         String gameLeagueText = "League: " + league;
         String gameRatingText = "Rating: " + rating;
-        //Date date = new Date(startTime);
         String gameNetworkText = "Network: " + network;
         if (network == null) {
             gameNetworkText = "Network: Unavailable";

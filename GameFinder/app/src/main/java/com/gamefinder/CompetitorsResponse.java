@@ -8,7 +8,6 @@ import java.io.Serializable;
  */
 public class CompetitorsResponse implements Serializable, Comparable<CompetitorsResponse> {
     private String id, league_id, name, league_name;
-    private Boolean isSelected = false;
 
     public String getId ()
     {
@@ -46,12 +45,6 @@ public class CompetitorsResponse implements Serializable, Comparable<Competitors
 
     public void setLeague_id(String league_id) {
         this.league_id = league_id;
-    }
-
-    public Boolean getIsSelected() { return isSelected;}
-
-    public void setIsSelected(Boolean isSelected) {
-        this.isSelected = isSelected;
     }
 
     @Override

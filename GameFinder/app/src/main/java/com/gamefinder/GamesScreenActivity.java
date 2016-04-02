@@ -23,6 +23,7 @@ import retrofit2.Response;
 public class GamesScreenActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
+
     private AppCompatActivity thisActivity = this;
 
     @Override
@@ -34,12 +35,12 @@ public class GamesScreenActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        try {
-            Intent intent = getIntent();
-            final String accessToken = intent.getStringExtra("accessToken");
-            final String client = intent.getStringExtra("client");
-            final String uid = intent.getStringExtra("uid");
+        Intent intent = getIntent();
+        final String accessToken = intent.getStringExtra("accessToken");
+        final String client = intent.getStringExtra("client");
+        final String uid = intent.getStringExtra("uid");
 
+        try {
             Call<List<GamesResponse>> call = ApiUtils.service.getGames(accessToken, client, uid);
             call.enqueue(new Callback<List<GamesResponse>>() {
                 @Override
