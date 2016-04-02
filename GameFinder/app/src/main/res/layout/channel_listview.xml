@@ -6,22 +6,21 @@
     android:orientation="horizontal">
 
     <EditText
+        android:id="@+id/channelNumberField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:ems="10"
-        android:id="@+id/channelNumberField"
-        android:layout_weight="0"
-        android:maxWidth="10dp" />
+        android:maxWidth="20dp"
+        android:minWidth="20dp"
+        android:paddingTop="10dp"
+        android:inputType="phone" />
 
     <TextView
         android:id="@+id/channelName"
-        android:layout_width="fill_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_weight="0"
+        android:layout_weight="0.5"
         android:gravity="center"
-        android:textStyle="bold"
-        android:editable="true" />
+        android:textStyle="bold" />
 
 </LinearLayout>

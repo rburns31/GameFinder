@@ -33,9 +33,6 @@ public class ChannelsActivity extends AppCompatActivity {
         // The layout element which will hold the list view
         final ListView listView = (ListView) findViewById(R.id.channel_listview);
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
         // Get the pertinent info passed into this activity from the last activity
         Intent intent = getIntent();
         final String accessToken = intent.getStringExtra("accessToken");
