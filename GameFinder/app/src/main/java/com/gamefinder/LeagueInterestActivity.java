@@ -16,14 +16,11 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  *
  */
 public class LeagueInterestActivity extends AppCompatActivity {
-    public final String BASE_URL = "https://fathomless-woodland-78351.herokuapp.com/api/";
     /**
      * Holds the response from the getLeagues API hit
      */
@@ -44,26 +41,20 @@ public class LeagueInterestActivity extends AppCompatActivity {
         final String client = intent.getStringExtra("client");
         final String uid = intent.getStringExtra("uid");
 
-        final Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create()).build();
-
-        final APIService service = retrofit.create(APIService.class);
-
         // getLeagues API hit, sets the list's entries to the values in the response
-        Call<List<LeaguesResponse>> getLeaguesCall = service.getLeagues(accessToken, client, uid);
+        Call<List<LeaguesResponse>> getLeaguesCall = ApiUtils.service.getLeagues(accessToken, client, uid);
         getLeaguesApiHit(getLeaguesCall);
 
         // getLeaguesPrefs API hit, TODO: set the preferences from the server's current values
-        //Call<List<PreferencesResponse>> getLeaguesPrefsCall = service.getLeaguesPrefs(accessToken, client, uid);
-        //getLeaguesPrefsApiHit(getLeaguesPrefsCall);
+        Call<List<PreferencesResponse>> getLeaguesPrefsCall = ApiUtils.service.getLeaguesPrefs(accessToken, client, uid);
+        getLeaguesPrefsApiHit(getLeaguesPrefsCall);
 
         // Handle the next button being clicked
-        final Button nextButton = (Button) findViewById(R.id.nextButton);
+        Button nextButton = (Button) findViewById(R.id.nextButton);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int numLeagues = responseBody.size();
-                System.out.println(numLeagues);
+                final int numLeagues = responseBody.size();
 
                 PreferenceAttributes[] allPrefs = new PreferenceAttributes[numLeagues];
                 final int[] leagueIds = new int[numLeagues];
@@ -83,38 +74,34 @@ public class LeagueInterestActivity extends AppCompatActivity {
                     thisPref.setScale(5);
 
                     allPrefs[i] = thisPref;
-                    System.out.println(allPrefs[i]);
                 }
-                //System.out.println(allPrefs.toString());
 
+                // Package these preferences into the desired format
                 PreferenceUser user = new PreferenceUser();
                 user.setPreferences_attributes(allPrefs);
                 PreferenceBody preference = new PreferenceBody();
                 preference.setUser(user);
 
-                Call<List<PreferencesResponse>> call = service.putPreferences(accessToken, client, uid, preference);
+                // putPreferences API hit,
+                Call<List<PreferencesResponse>> call = ApiUtils.service.putPreferences(accessToken, client, uid, preference);
                 call.enqueue(new Callback<List<PreferencesResponse>>() {
                     @Override
                     public void onResponse(Call<List<PreferencesResponse>> call, retrofit2.Response<List<PreferencesResponse>> response) {
                         if (response.isSuccess()) {
-                            System.out.println("Response was a success");
-
                             List<List<CompetitorsResponse>> competitors = new ArrayList<>();
-                            for (int i = 0; i < leagueIds.length; i++) {
-                                int id = leagueIds[i];
-                                int rating = ratings[i];
-                                if (rating > 0) {
-                                    Call<List<CompetitorsResponse>> getCompetitors = service.getCompetitors(String.valueOf(id), accessToken, client, uid);
+
+                            // If a non-zero preference then add those teams to the competitors list
+                            for (int i = 0; i < numLeagues; i++) {
+                                if (ratings[i] > 0) {
+                                    Call<List<CompetitorsResponse>> getCompetitorsCall = ApiUtils.service.getCompetitors(String.valueOf(leagueIds[i]), accessToken, client, uid);
                                     try {
-                                        List<CompetitorsResponse> responseBody = getCompetitors.execute().body();
+                                        List<CompetitorsResponse> responseBody = getCompetitorsCall.execute().body();
                                         competitors.add(responseBody);
                                     } catch (IOException e) {
                                         System.out.println(e.getMessage());
                                     }
                                 }
                             }
-
-                            System.out.println("COMPETITORS SIZE: " + competitors.size());
 
                             // Start the next activity
                             Intent nextIntent = new Intent(LeagueInterestActivity.this, TeamInterestActivity.class);

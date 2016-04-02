@@ -10,13 +10,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  *
@@ -27,6 +21,7 @@ public class ChannelsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channels);
+
         final AppCompatActivity thisActivity = this;
 
         // The layout element which will hold the list view
@@ -37,12 +32,6 @@ public class ChannelsActivity extends AppCompatActivity {
         final String accessToken = intent.getStringExtra("accessToken");
         final String client = intent.getStringExtra("client");
         final String uid = intent.getStringExtra("uid");
-
-        // The service to hit the API to post channels
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://fathomless-woodland-78351.herokuapp.com/api/")
-                .addConverterFactory(GsonConverterFactory.create()).build();
-        final APIService service = retrofit.create(APIService.class);
 
         // Populate the channels list
         List<String> defaultChannelNames = Arrays.asList(getResources().getStringArray(R.array.defaultChannels));

@@ -20,48 +20,41 @@ import okhttp3.Headers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity {
-
-    public final String BASE_URL = "https://fathomless-woodland-78351.herokuapp.com/api/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // Verify that the phone's keyboard is closed
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+        // Load the GameFinder logo
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
         Picasso.with(LoginActivity.this).load(R.drawable.logo).fit().into(imageView);
 
+        // Pull all relevant elements from the layout
         final Button loginButton = (Button) findViewById(R.id.loginButton);
         final TextView signUp = (TextView) findViewById(R.id.signUpButton);
         final EditText email = (EditText) findViewById(R.id.email);
         final EditText password = (EditText) findViewById(R.id.password);
 
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        final APIService service = retrofit.create(APIService.class);
-        final Intent intent = new Intent(this, SignUpActivity.class);
-
+        // If selected, start the Sign Up Activity
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Start the Sign Up Activity
-                startActivity(intent);
+                startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
             }
         });
 
+        // Handle the login button being selected
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 User user = new User(email.getText().toString(), password.getText().toString());
-                Call<LoginResponse> call = service.signIn(user);
+                Call<LoginResponse> call = ApiUtils.service.signIn(user);
                 call.enqueue(new Callback<LoginResponse>() {
                     @Override
                     public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -70,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
                             String errorMessage = "";
                             try {
                                 LoginErrorResponse errorResponse
-                                        = (LoginErrorResponse) retrofit.responseBodyConverter(
+                                        = (LoginErrorResponse) ApiUtils.retrofit.responseBodyConverter(
                                         LoginErrorResponse.class,
                                         LoginErrorResponse.class.getAnnotations())
                                         .convert(response.errorBody());
@@ -106,14 +99,15 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     *
+     * @param headers
+     */
     private void openLeagues(Headers headers) {
         Intent intent = new Intent(this, LeagueInterestActivity.class);
-        String accessToken = headers.get("Access-Token");
-        String client = headers.get("Client");
-        String uid = headers.get("UID");
-        intent.putExtra("accessToken", accessToken);
-        intent.putExtra("client", client);
-        intent.putExtra("uid", uid);
+        intent.putExtra("accessToken", headers.get("Access-Token"));
+        intent.putExtra("client", headers.get("Client"));
+        intent.putExtra("uid", headers.get("UID"));
         startActivity(intent);
     }
 }

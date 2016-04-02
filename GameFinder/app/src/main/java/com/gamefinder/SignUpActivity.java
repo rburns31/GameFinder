@@ -19,34 +19,28 @@ import java.io.IOException;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SignUpActivity extends AppCompatActivity {
-
-    public final String BASE_URL = "https://fathomless-woodland-78351.herokuapp.com/api/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        // Verify that the phone's keyboard is closed
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+        // Load the GameFinder logo
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
         Picasso.with(SignUpActivity.this).load(R.drawable.logo).fit().into(imageView);
 
+        // Pull all relevant elements from the layout
         final Button createAccountButton = (Button) findViewById(R.id.createAccount);
         final EditText email = (EditText) findViewById(R.id.email);
         final EditText password = (EditText) findViewById(R.id.input_password);
         final EditText confirmPassword = (EditText) findViewById(R.id.confirmPassword);
         final TextView linkLogin = (TextView) findViewById(R.id.link_login);
 
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        final APIService service2 = retrofit.create(APIService.class);
         final Intent intent = new Intent(this, LoginActivity.class);
 
         createAccountButton.setOnClickListener(new View.OnClickListener() {
@@ -55,7 +49,7 @@ public class SignUpActivity extends AppCompatActivity {
                         password.getText().toString(),
                         confirmPassword.getText().toString());
 
-                Call<SignUpResponse> call = service2.signUp(signUpUser);
+                Call<SignUpResponse> call = ApiUtils.service.signUp(signUpUser);
                 call.enqueue(new Callback<SignUpResponse>() {
                     @Override
                     public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
@@ -65,7 +59,7 @@ public class SignUpActivity extends AppCompatActivity {
                             String errorMessage = "";
                             try {
                                 SignUpErrorResponse errorResponse
-                                        = (SignUpErrorResponse) retrofit.responseBodyConverter(
+                                        = (SignUpErrorResponse) ApiUtils.retrofit.responseBodyConverter(
                                                 SignUpErrorResponse.class,
                                                 SignUpErrorResponse.class.getAnnotations())
                                         .convert(response.errorBody());
@@ -111,7 +105,7 @@ public class SignUpActivity extends AppCompatActivity {
         linkLogin.setOnClickListener(new View.OnClickListener() {
            @Override
             public void onClick(View v) {
-               //Finish the registration screen and return to the Login Activity
+               // Finish the registration screen and return to the Login Activity
                finish();
            }
         });

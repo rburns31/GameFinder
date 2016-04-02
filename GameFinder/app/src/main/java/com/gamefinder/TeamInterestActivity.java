@@ -7,12 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,18 +18,13 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  *
  * Created by Paul on 3/6/2016.
  */
 public class TeamInterestActivity extends AppCompatActivity {
-    public final String BASE_URL = "https://fathomless-woodland-78351.herokuapp.com/api/";
-    //private ListView listView;
     static List<List<CompetitorsResponse>> competitorsList;
-    Button nextButton;
     List<CompetitorsResponse> teamList;
     MyCustomAdapter dataAdapter = null;
     static int currentLeagueLocation = 0;
@@ -41,9 +34,8 @@ public class TeamInterestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_interest);
-        System.out.println(currentLeagueLocation);
 
-        checkButtonClick();
+        System.out.println(currentLeagueLocation);
 
         Intent intent = getIntent();
         final String accessToken = intent.getStringExtra("accessToken");
@@ -64,18 +56,9 @@ public class TeamInterestActivity extends AppCompatActivity {
             // Create an ArrayAdapter
             dataAdapter = new MyCustomAdapter(this, R.layout.team_listview, teamList);
             ListView listView = (ListView) findViewById(R.id.listviewteam);
+
             // Assign adapter to ListView
             listView.setAdapter(dataAdapter);
-
-            /**listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    // When clicked, show a toast with the TextView text
-                    CompetitorsResponse team = (CompetitorsResponse) parent.getItemAtPosition(position);
-                    Toast.makeText(getApplicationContext(),
-                            "Clicked on Team: " + team.getName(),
-                            Toast.LENGTH_LONG).show();
-                }
-            });*/
 
             setTitle(competitorsList.get(currentLeagueLocation).get(0).getLeagueName());
 
@@ -89,6 +72,8 @@ public class TeamInterestActivity extends AppCompatActivity {
                 nextIntent = new Intent(this, TvSetupActivity.class);
             }
 
+            // Handle the next button being clicked
+            Button nextButton = (Button) findViewById(R.id.nextButton);
             nextButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -115,14 +100,9 @@ public class TeamInterestActivity extends AppCompatActivity {
                     PreferenceBody preference = new PreferenceBody();
                     preference.setUser(user);
 
-                    final Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl(BASE_URL)
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .build();
 
-                    final APIService service = retrofit.create(APIService.class);
 
-                    Call<List<PreferencesResponse>> call = service.putPreferences(accessToken,client,uid,preference);
+                    Call<List<PreferencesResponse>> call = ApiUtils.service.putPreferences(accessToken,client,uid,preference);
                     call.enqueue(new Callback<List<PreferencesResponse>>() {
                         @Override
                         public void onResponse(Call<List<PreferencesResponse>> call, retrofit2.Response<List<PreferencesResponse>> response) {
@@ -179,10 +159,6 @@ public class TeamInterestActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         CheckBox cb = (CheckBox) v;
                         CompetitorsResponse team = (CompetitorsResponse) cb.getTag();
-                        /**Toast.makeText(getApplicationContext(),
-                                "Clicked on Checkbox: " + cb.getText() +
-                                        " is " + cb.isChecked(),
-                                Toast.LENGTH_LONG).show();*/
                         team.setIsSelected(cb.isChecked());
                     }
                 });
@@ -197,27 +173,5 @@ public class TeamInterestActivity extends AppCompatActivity {
 
             return convertView;
         }
-    }
-
-    private void checkButtonClick() {
-        nextButton = (Button) findViewById(R.id.teamNextButton);
-        nextButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-                StringBuffer responseText = new StringBuffer();
-                responseText.append("The following were selected...\n");
-
-                List<CompetitorsResponse> teamList = dataAdapter.teamList;
-                for (int i = 0; i < teamList.size(); i++) {
-                    CompetitorsResponse team = teamList.get(i);
-                    if (team.getIsSelected()) {
-                        responseText.append("\n" + team.getName()); //send to database here
-                    }
-                }
-                //Toast.makeText(getApplicationContext(), responseText, Toast.LENGTH_LONG).show();
-            }
-        });
     }
 }

@@ -14,18 +14,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GamesScreenActivity extends AppCompatActivity {
-
-    public final String BASE_URL = "https://fathomless-woodland-78351.herokuapp.com/api/";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private AppCompatActivity thisActivity = this;
@@ -45,14 +40,7 @@ public class GamesScreenActivity extends AppCompatActivity {
             final String client = intent.getStringExtra("client");
             final String uid = intent.getStringExtra("uid");
 
-            final Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-
-            final APIService service = retrofit.create(APIService.class);
-
-            Call<List<GamesResponse>> call = service.getGames(accessToken, client, uid);
+            Call<List<GamesResponse>> call = ApiUtils.service.getGames(accessToken, client, uid);
             call.enqueue(new Callback<List<GamesResponse>>() {
                 @Override
                 public void onResponse(Call<List<GamesResponse>> call, Response<List<GamesResponse>> response) {
