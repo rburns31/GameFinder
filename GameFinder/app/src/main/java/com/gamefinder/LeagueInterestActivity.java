@@ -19,93 +19,76 @@ import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ *
+ */
 public class LeagueInterestActivity extends AppCompatActivity {
-
     public final String BASE_URL = "https://fathomless-woodland-78351.herokuapp.com/api/";
-    private ListView listView;
-    ArrayAdapter<String> adapter;
-    AppCompatActivity thisActivity = this;
-    ArrayList<String> leagues;
-    ArrayList<Integer> ids;
-    List<LeaguesResponse> responseBody;
-    int[] leagueIDs, ratings;
+    /**
+     * Holds the response from the getLeagues API hit
+     */
+    private List<LeaguesResponse> responseBody;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_league_interest);
 
-        listView = (ListView) findViewById(R.id.league_listview);
-
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                 .permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        // Pull all relevant information out of the intent
         Intent intent = getIntent();
         final String accessToken = intent.getStringExtra("accessToken");
         final String client = intent.getStringExtra("client");
         final String uid = intent.getStringExtra("uid");
-        final List<List<CompetitorsResponse>> competitors = new ArrayList<>();
 
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        final Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create()).build();
 
         final APIService service = retrofit.create(APIService.class);
 
-        leagues = new ArrayList<String>();
-        ids = new ArrayList<Integer>();
+        // getLeagues API hit, sets the list's entries to the values in the response
+        Call<List<LeaguesResponse>> getLeaguesCall = service.getLeagues(accessToken, client, uid);
+        getLeaguesApiHit(getLeaguesCall);
 
-        Call<List<LeaguesResponse>> call = service.getLeagues(accessToken, client, uid);
-        call.enqueue(new Callback<List<LeaguesResponse>>() {
-            @Override
-            public void onResponse(Call<List<LeaguesResponse>> call, retrofit2.Response<List<LeaguesResponse>> response) {
-                if (response.isSuccess()) {
-                    responseBody = response.body();
-                    for (int i = 0; i < responseBody.size(); i++) {
-                        leagues.add(responseBody.get(i).getName());
-                        ids.add(Integer.parseInt(responseBody.get(i).getId())); //ids not used yet
-                    }
-                    final ArrayAdapter<LeaguesResponse> adapter = new LeagueListViewAdapter(thisActivity,
-                            R.layout.item_listview, responseBody);
-                    listView.setAdapter(adapter);
-                    System.out.println(responseBody.toString());
-                } else {
-                    System.out.println("response failure");
-                }
-            }
+        // getLeaguesPrefs API hit, TODO: set the preferences from the server's current values
+        //Call<List<PreferencesResponse>> getLeaguesPrefsCall = service.getLeaguesPrefs(accessToken, client, uid);
+        //getLeaguesPrefsApiHit(getLeaguesPrefsCall);
 
-            @Override
-            public void onFailure(Call<List<LeaguesResponse>> call, Throwable t) {
-                System.out.println(t.getMessage());
-            }
-        });
-
+        // Handle the next button being clicked
         final Button nextButton = (Button) findViewById(R.id.nextButton);
-        final Intent nextIntent = new Intent(this, TeamInterestActivity.class);
-
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Start the Team Interest Activity
-                PreferenceAttributes[] attributes = new PreferenceAttributes[responseBody.size()];
-                leagueIDs = new int[responseBody.size()];
-                ratings = new int[leagueIDs.length];
-                for (int i = 0; i < responseBody.size(); i++) {
+                int numLeagues = responseBody.size();
+                System.out.println(numLeagues);
+
+                PreferenceAttributes[] allPrefs = new PreferenceAttributes[numLeagues];
+                final int[] leagueIds = new int[numLeagues];
+                final int[] ratings = new int[numLeagues];
+
+                // For each league, create a preference attributes object
+                for (int i = 0; i < numLeagues; i++) {
                     int id = Integer.parseInt(responseBody.get(i).getId());
-                    leagueIDs[i] = id;
+                    leagueIds[i] = id;
                     Float ratingStar = responseBody.get(i).getRatingStar();
                     ratings[i] = ratingStar.intValue();
-                    PreferenceAttributes preferenceAttribute = new PreferenceAttributes();
-                    preferenceAttribute.setPreference_type("League");
-                    preferenceAttribute.setPreference_id(id);
-                    preferenceAttribute.setAmount(ratingStar.intValue());
-                    preferenceAttribute.setScale(5);
-                    attributes[i] = preferenceAttribute;
+
+                    PreferenceAttributes thisPref = new PreferenceAttributes();
+                    thisPref.setPreference_type("League");
+                    thisPref.setPreference_id(id);
+                    thisPref.setAmount(ratingStar.intValue());
+                    thisPref.setScale(5);
+
+                    allPrefs[i] = thisPref;
+                    System.out.println(allPrefs[i]);
                 }
+                //System.out.println(allPrefs.toString());
+
                 PreferenceUser user = new PreferenceUser();
-                user.setPreferences_attributes(attributes);
+                user.setPreferences_attributes(allPrefs);
                 PreferenceBody preference = new PreferenceBody();
                 preference.setUser(user);
 
@@ -114,9 +97,11 @@ public class LeagueInterestActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<List<PreferencesResponse>> call, retrofit2.Response<List<PreferencesResponse>> response) {
                         if (response.isSuccess()) {
+                            System.out.println("Response was a success");
 
-                            for (int i = 0; i < leagueIDs.length; i++) {
-                                int id = leagueIDs[i];
+                            List<List<CompetitorsResponse>> competitors = new ArrayList<>();
+                            for (int i = 0; i < leagueIds.length; i++) {
+                                int id = leagueIds[i];
                                 int rating = ratings[i];
                                 if (rating > 0) {
                                     Call<List<CompetitorsResponse>> getCompetitors = service.getCompetitors(String.valueOf(id), accessToken, client, uid);
@@ -126,35 +111,16 @@ public class LeagueInterestActivity extends AppCompatActivity {
                                     } catch (IOException e) {
                                         System.out.println(e.getMessage());
                                     }
-/*                                    getCompetitors.enqueue(new Callback<List<CompetitorsResponse>>() {
-                                        @Override
-                                        public void onResponse(Call<List<CompetitorsResponse>> call, retrofit2.Response<List<CompetitorsResponse>> response) {
-                                            if (response.isSuccess()) {
-                                                List<CompetitorsResponse> responseBody = response.body();
-                                                System.out.println(responseBody.size());
-                                                competitors.addAll(responseBody);
-
-                                            } else {
-                                                System.out.println("response failure");
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<List<CompetitorsResponse>> call, Throwable t) {
-                                            System.out.println(t.getMessage());
-                                        }
-                                    });*/
                                 }
                             }
 
-                            final Intent nextIntent;
                             System.out.println("COMPETITORS SIZE: " + competitors.size());
-                            if (competitors.size() == 0) {
-                                nextIntent = new Intent(LeagueInterestActivity.this,TvSetupActivity.class);
-                            } else {
-                                nextIntent = new Intent(LeagueInterestActivity.this,TeamInterestActivity.class);
-                            }
 
+                            // Start the next activity
+                            Intent nextIntent = new Intent(LeagueInterestActivity.this, TeamInterestActivity.class);
+                            if (competitors.size() == 0) {
+                                nextIntent = new Intent(LeagueInterestActivity.this, TvSetupActivity.class);
+                            }
                             Bundle bundleObject = new Bundle();
                             bundleObject.putSerializable("competitorsList", (Serializable) competitors);
                             nextIntent.putExtras(bundleObject);
@@ -163,7 +129,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
                             nextIntent.putExtra("uid", uid);
                             startActivity(nextIntent);
                         } else {
-                            System.out.println("response failure");
+                            System.out.println("Response failure when putting league preferences");
                         }
                     }
 
@@ -172,30 +138,62 @@ public class LeagueInterestActivity extends AppCompatActivity {
                         System.out.println(t.getMessage());
                     }
                 });
-
-                startActivity(nextIntent);
             }
         });
     }
 
-    /*private AdapterView.OnItemClickListener onItemClickListener() { //Might come back to it
-        return new AdapterView.OnItemClickListener() {
-            @SuppressLint("SetTextI18n")
+    /**
+     *
+     */
+    private void getLeaguesApiHit(Call<List<LeaguesResponse>> call) {
+        final AppCompatActivity thisActivity = this;
+
+        call.enqueue(new Callback<List<LeaguesResponse>>() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final Dialog dialog = new Dialog(getApplicationContext());
-                dialog.setContentView(R.layout.layout_dialog);
-                dialog.setTitle("Leagues");
+            public void onResponse(Call<List<LeaguesResponse>> call, retrofit2.Response<List<LeaguesResponse>> response) {
+                if (response.isSuccess()) {
+                    responseBody = response.body();
 
-                TextView name = (TextView) dialog.findViewById(R.id.league_name);
-                TextView starRate = (TextView) dialog.findViewById(R.id.rate);
+                    ArrayAdapter<LeaguesResponse> adapter
+                            = new LeagueListViewAdapter(thisActivity, R.layout.item_listview, responseBody);
 
-                LeaguesResponse leagues = (LeaguesResponse) parent.getAdapter().getItem(position);
-                name.setText("League name: " + leagues.getName());
-                starRate.setText("Your rating: " + leagues.getRatingStar());
-
-                dialog.show();
+                    ListView listView = (ListView) findViewById(R.id.league_listview);
+                    listView.setAdapter(adapter);
+                } else {
+                    System.out.println("Response failure when getting leagues");
+                }
             }
-        };
-    }*/
+
+            @Override
+            public void onFailure(Call<List<LeaguesResponse>> call, Throwable t) {
+                System.out.println(t.getMessage());
+            }
+        });
+    }
+
+    /**
+     *
+     */
+    private void getLeaguesPrefsApiHit(Call<List<PreferencesResponse>> call) {
+        //final AppCompatActivity thisActivity = this;
+
+        call.enqueue(new Callback<List<PreferencesResponse>>() {
+            @Override
+            public void onResponse(Call<List<PreferencesResponse>> call, retrofit2.Response<List<PreferencesResponse>> response) {
+                if (response.isSuccess()) {
+                    //responseBody = response.body();
+                    System.out.println(response.body().toString());
+
+                    //ListView listView = (ListView) findViewById(R.id.league_listview);
+                } else {
+                    System.out.println("Response failure when getting league preferences");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PreferencesResponse>> call, Throwable t) {
+                System.out.println(t.getMessage());
+            }
+        });
+    }
 }

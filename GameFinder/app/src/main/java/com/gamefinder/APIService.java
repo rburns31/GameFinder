@@ -33,6 +33,12 @@ public interface APIService {
                                      @Header("UID")String uid);
 
     @Headers("Token-Type: Bearer")
+    @GET("/user/preferences/league")
+    Call<List<PreferencesResponse>> getLeaguesPrefs(@Header("Access-Token")String accessToken,
+                                           @Header("Client")String client,
+                                           @Header("UID")String uid);
+
+    @Headers("Token-Type: Bearer")
     @GET("leagues/{id}/competitors")
     Call<List<CompetitorsResponse>> getCompetitors(@Path("id") String id, @Header("Access-Token")String accessToken,
                                                    @Header("Client")String client,
