@@ -59,30 +59,40 @@ public class TeamInterestRecyclerAdapter extends RecyclerView.Adapter<TeamIntere
         Resources resources = parentContext.getResources();
 
         String logoFile = name.replaceAll("[ .]", "_").toLowerCase();
-        System.out.println(logoFile);
+        //System.out.println(logoFile);
         String placeHolderLogoFile = league.replaceAll("[ .]", "_").toLowerCase() + "_logo";
-        System.out.println(placeHolderLogoFile);
+        //System.out.println(placeHolderLogoFile);
 
-        int placeholderLogo = resources.getIdentifier(placeHolderLogoFile, "raw", parentContext.getPackageName());
-
+        final int placeholderLogoId = resources.getIdentifier(placeHolderLogoFile, "raw", parentContext.getPackageName());
         final int logoId = resources.getIdentifier(logoFile, "raw", parentContext.getPackageName());
         if (logoId != 0) {
-            Picasso.with(parentContext).load(logoId).fit().transform(new GrayscaleTransformation()).into(holder.thumbnail);
+            Picasso.with(parentContext).load(logoId).fit().centerCrop().transform(new GrayscaleTransformation()).into(holder.thumbnail);
             holder.thumbnail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     System.out.println("Clicked image");
                     selectedTeams[position] = !selectedTeams[position];
                     if (selectedTeams[position]) {
-                        Picasso.with(parentContext).load(logoId).fit().into(holder.thumbnail);
+                        Picasso.with(parentContext).load(logoId).fit().centerCrop().into(holder.thumbnail);
                     } else {
-                        Picasso.with(parentContext).load(logoId).fit().transform(new GrayscaleTransformation()).into(holder.thumbnail);
+                        Picasso.with(parentContext).load(logoId).fit().centerCrop().transform(new GrayscaleTransformation()).into(holder.thumbnail);
                     }
                 }
             });
         } else {
-            Picasso.with(parentContext).load(placeholderLogo).fit().into(holder.thumbnail);
-        }
+            Picasso.with(parentContext).load(placeholderLogoId).fit().centerCrop().transform(new GrayscaleTransformation()).into(holder.thumbnail);
+            holder.thumbnail.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    System.out.println("Clicked image");
+                    selectedTeams[position] = !selectedTeams[position];
+                    if (selectedTeams[position]) {
+                        Picasso.with(parentContext).load(placeholderLogoId).fit().centerCrop().into(holder.thumbnail);
+                    } else {
+                        Picasso.with(parentContext).load(placeholderLogoId).fit().centerCrop().transform(new GrayscaleTransformation()).into(holder.thumbnail);
+                    }
+                }
+            });        }
 
         holder.teamName.setText(name);
     }
