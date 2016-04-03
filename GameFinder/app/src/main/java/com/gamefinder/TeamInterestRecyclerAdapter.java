@@ -11,8 +11,6 @@ import android.support.v7.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 import jp.wasabeef.picasso.transformations.GrayscaleTransformation;
@@ -49,16 +47,12 @@ public class TeamInterestRecyclerAdapter extends RecyclerView.Adapter<TeamIntere
         String name = team.getName();
         String league = team.getLeagueName();
 
-        // The set of leagues whose logos are supported to be displayed
-        HashSet<String> supportedLeagues = new HashSet<>();
-        supportedLeagues.addAll(Arrays.asList("NBA", "MLB", "NHL", "NFL", "MLS"));
-
         // Loads the logo into the image view on the team card
         Resources resources = parentContext.getResources();
 
-        String logoFile = name.replaceAll("[ .]", "_").toLowerCase();
+        String logoFile = name.replaceAll("[ .&]", "_").toLowerCase();
         //System.out.println(logoFile);
-        String placeHolderLogoFile = league.replaceAll("[ .]", "_").toLowerCase() + "_logo";
+        String placeHolderLogoFile = league.replaceAll("[ .&]", "_").toLowerCase() + "_logo";
         //System.out.println(placeHolderLogoFile);
 
         final int placeholderLogoId = resources.getIdentifier(placeHolderLogoFile, "raw", parentContext.getPackageName());
@@ -81,12 +75,26 @@ public class TeamInterestRecyclerAdapter extends RecyclerView.Adapter<TeamIntere
             holder.thumbnail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("Clicked image");
                     selectedTeams[position] = !selectedTeams[position];
                     if (selectedTeams[position]) {
                         Picasso.with(parentContext).load(placeholderLogoId).fit().centerCrop().into(holder.thumbnail);
                     } else {
                         Picasso.with(parentContext).load(placeholderLogoId).fit().centerCrop().transform(new GrayscaleTransformation()).into(holder.thumbnail);
+                    }
+                }
+            });
+        } else if (league.equals("North American Soccer") || league.equals("European Soccer")) {
+            final int soccerLogoId = resources.getIdentifier("soccer", "raw", parentContext.getPackageName());
+
+            Picasso.with(parentContext).load(soccerLogoId).fit().centerCrop().transform(new GrayscaleTransformation()).into(holder.thumbnail);
+            holder.thumbnail.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    selectedTeams[position] = !selectedTeams[position];
+                    if (selectedTeams[position]) {
+                        Picasso.with(parentContext).load(soccerLogoId).fit().centerCrop().into(holder.thumbnail);
+                    } else {
+                        Picasso.with(parentContext).load(soccerLogoId).fit().centerCrop().transform(new GrayscaleTransformation()).into(holder.thumbnail);
                     }
                 }
             });

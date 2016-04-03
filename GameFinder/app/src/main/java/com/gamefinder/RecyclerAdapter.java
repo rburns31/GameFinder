@@ -59,9 +59,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         // Loads the logos into the image views on the game card
         Resources resources = parentContext.getResources();
 
-        String logoFile1 = team1.replaceAll("[ .]", "_").toLowerCase();
+        String logoFile1 = team1.replaceAll("[ .&]", "_").toLowerCase();
         //System.out.println(logoFile1);
-        String logoFile2 = team2.replaceAll("[ .]", "_").toLowerCase();
+        String logoFile2 = team2.replaceAll("[ .&]", "_").toLowerCase();
         //System.out.println(logoFile2);
         String placeHolderLogoFile = league.replaceAll("[ .]", "_").toLowerCase() + "_logo";
         //System.out.println(placeHolderLogoFile);

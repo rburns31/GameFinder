@@ -12,6 +12,7 @@ import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import retrofit2.Call;
@@ -54,16 +55,14 @@ public class TeamInterestActivity extends AppCompatActivity {
                     });
             dialog.show();
 
-            //Bundle bundleObject = getIntent().getExtras();
-            //competitorsList = (List<List<CompetitorsResponse>>) bundleObject.getSerializable("competitorsList");
             Bundle bundle = LeagueInterestActivity.getCompetitorsBundle();
             competitorsList = (List<List<CompetitorsResponse>>) bundle.getSerializable("competitorsList");
         }
         assert competitorsList != null;
 
         // Pull this league's teams out of the overall list
-        final List<CompetitorsResponse> teamList = competitorsList.get(currentLeagueLocation);
-        Collections.sort(teamList);
+        List<CompetitorsResponse> teamsList = competitorsList.get(currentLeagueLocation);
+        Collections.sort(teamsList);
 
         // Set the title of the page to the current league's name
         setTitle(competitorsList.get(currentLeagueLocation).get(0).getLeagueName());
@@ -77,8 +76,19 @@ public class TeamInterestActivity extends AppCompatActivity {
             nextIntent = new Intent(this, TvSetupActivity.class);
         }
 
+        // Filter out all of the duplicates, TODO: determine how this affects games list
+        final List<CompetitorsResponse> filteredTeamsList = new ArrayList<>();
+        HashSet<String> namesUsed = new HashSet<>();
+        for (CompetitorsResponse team: teamsList) {
+            String teamName = team.getName();
+            if (!namesUsed.contains(teamName)) {
+                filteredTeamsList.add(team);
+                namesUsed.add(teamName);
+            }
+        }
+
         // Set the adapter to display the current league's team cards
-        final RecyclerView.Adapter adapter = new TeamInterestRecyclerAdapter(teamList);
+        final RecyclerView.Adapter adapter = new TeamInterestRecyclerAdapter(filteredTeamsList);
         recyclerView.setAdapter(adapter);
 
         // Handle the next button being clicked
@@ -89,8 +99,8 @@ public class TeamInterestActivity extends AppCompatActivity {
                 // Store all of the team id's were favorited by the user for this league
                 boolean[] selectedPositions = ((TeamInterestRecyclerAdapter) adapter).getSelectedTeams();
                 ArrayList<Integer> selectedTeamIds = new ArrayList<>();
-                for (int i = 0; i < teamList.size(); i++) {
-                    CompetitorsResponse team = teamList.get(i);
+                for (int i = 0; i < filteredTeamsList.size(); i++) {
+                    CompetitorsResponse team = filteredTeamsList.get(i);
                     if (selectedPositions[i]) {
                         System.out.println(team.getName());
                         selectedTeamIds.add(Integer.parseInt(team.getId()));
