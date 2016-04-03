@@ -54,8 +54,10 @@ public class TeamInterestActivity extends AppCompatActivity {
                     });
             dialog.show();
 
-            Bundle bundleObject = getIntent().getExtras();
-            competitorsList = (List<List<CompetitorsResponse>>) bundleObject.getSerializable("competitorsList");
+            //Bundle bundleObject = getIntent().getExtras();
+            //competitorsList = (List<List<CompetitorsResponse>>) bundleObject.getSerializable("competitorsList");
+            Bundle bundle = LeagueInterestActivity.getCompetitorsBundle();
+            competitorsList = (List<List<CompetitorsResponse>>) bundle.getSerializable("competitorsList");
         }
         assert competitorsList != null;
 

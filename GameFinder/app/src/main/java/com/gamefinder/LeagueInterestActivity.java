@@ -12,6 +12,8 @@ import android.widget.ListView;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import retrofit2.Call;
@@ -25,6 +27,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
      * Holds the response from the getLeagues API hit
      */
     private List<LeaguesResponse> responseBody;
+    private static List<List<CompetitorsResponse>> competitors;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,11 +91,11 @@ public class LeagueInterestActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<List<PreferencesResponse>> call, retrofit2.Response<List<PreferencesResponse>> response) {
                         if (response.isSuccess()) {
-                            List<List<CompetitorsResponse>> competitors = new ArrayList<>();
+                            competitors = new ArrayList<>();
 
-                            // If a non-zero preference then add those teams to the competitors list
+                            // If a non-zero preference, (and not PGA), then add those teams to the competitors list
                             for (int i = 0; i < numLeagues; i++) {
-                                if (ratings[i] > 0) {
+                                if (ratings[i] > 0 && leagueIds[i] != 17) {
                                     Call<List<CompetitorsResponse>> getCompetitorsCall = ApiUtils.service.getCompetitors(String.valueOf(leagueIds[i]), accessToken, client, uid);
                                     try {
                                         List<CompetitorsResponse> responseBody = getCompetitorsCall.execute().body();
@@ -108,9 +111,9 @@ public class LeagueInterestActivity extends AppCompatActivity {
                             if (competitors.size() == 0) {
                                 nextIntent = new Intent(LeagueInterestActivity.this, TvSetupActivity.class);
                             }
-                            Bundle bundleObject = new Bundle();
-                            bundleObject.putSerializable("competitorsList", (Serializable) competitors);
-                            nextIntent.putExtras(bundleObject);
+                            //Bundle bundleObject = new Bundle();
+                            //bundleObject.putSerializable("competitorsList", (Serializable) competitors);
+                            //nextIntent.putExtras(bundleObject);
                             nextIntent.putExtra("accessToken", accessToken);
                             nextIntent.putExtra("client", client);
                             nextIntent.putExtra("uid", uid);
@@ -140,6 +143,19 @@ public class LeagueInterestActivity extends AppCompatActivity {
             public void onResponse(Call<List<LeaguesResponse>> call, retrofit2.Response<List<LeaguesResponse>> response) {
                 if (response.isSuccess()) {
                     responseBody = response.body();
+
+                    HashSet<String> supportedLeagues = new HashSet<>();
+                    supportedLeagues.addAll(Arrays.asList("MLB", "PGA", "NBA",
+                            "NCAA Men's Basketball", "NCAA Football", "NHL", "NFL",
+                            "North American Soccer", "European Soccer"));
+
+                    List<LeaguesResponse> supported = new ArrayList<>();
+                    for (LeaguesResponse league: responseBody) {
+                        if (supportedLeagues.contains(league.getName())) {
+                            supported.add(league);
+                        }
+                    }
+                    responseBody = supported;
 
                     ArrayAdapter<LeaguesResponse> adapter
                             = new LeagueListViewAdapter(thisActivity, R.layout.item_listview, responseBody);
@@ -182,5 +198,11 @@ public class LeagueInterestActivity extends AppCompatActivity {
                 System.out.println(t.getMessage());
             }
         });
+    }
+
+    public static Bundle getCompetitorsBundle() {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("competitorsList", (Serializable) competitors);
+        return bundle;
     }
 }

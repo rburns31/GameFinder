@@ -29,6 +29,7 @@ public class TeamInterestRecyclerAdapter extends RecyclerView.Adapter<TeamIntere
     public TeamInterestRecyclerAdapter(List<CompetitorsResponse> teamsList) {
         this.teamsList = teamsList;
         selectedTeams = new boolean[teamsList.size()];
+        System.out.println(teamsList.get(0).getName());
     }
 
     @Override
@@ -51,9 +52,6 @@ public class TeamInterestRecyclerAdapter extends RecyclerView.Adapter<TeamIntere
         // The set of leagues whose logos are supported to be displayed
         HashSet<String> supportedLeagues = new HashSet<>();
         supportedLeagues.addAll(Arrays.asList("NBA", "MLB", "NHL", "NFL", "MLS"));
-        if (!supportedLeagues.contains(league)) {
-            return;
-        }
 
         // Loads the logo into the image view on the team card
         Resources resources = parentContext.getResources();
@@ -70,7 +68,6 @@ public class TeamInterestRecyclerAdapter extends RecyclerView.Adapter<TeamIntere
             holder.thumbnail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("Clicked image");
                     selectedTeams[position] = !selectedTeams[position];
                     if (selectedTeams[position]) {
                         Picasso.with(parentContext).load(logoId).fit().centerCrop().into(holder.thumbnail);
@@ -79,7 +76,7 @@ public class TeamInterestRecyclerAdapter extends RecyclerView.Adapter<TeamIntere
                     }
                 }
             });
-        } else {
+        } else if (placeholderLogoId != 0) {
             Picasso.with(parentContext).load(placeholderLogoId).fit().centerCrop().transform(new GrayscaleTransformation()).into(holder.thumbnail);
             holder.thumbnail.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -92,7 +89,15 @@ public class TeamInterestRecyclerAdapter extends RecyclerView.Adapter<TeamIntere
                         Picasso.with(parentContext).load(placeholderLogoId).fit().centerCrop().transform(new GrayscaleTransformation()).into(holder.thumbnail);
                     }
                 }
-            });        }
+            });
+        } else {
+            holder.thumbnail.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    selectedTeams[position] = !selectedTeams[position];
+                }
+            });
+        }
 
         holder.teamName.setText(name);
     }
