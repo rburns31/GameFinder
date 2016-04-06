@@ -104,10 +104,11 @@ public class LoginActivity extends AppCompatActivity {
      * @param headers
      */
     private void openLeagues(Headers headers) {
+        ApiUtils.accessToken = headers.get("Access-Token");
+        ApiUtils.client = headers.get("Client");
+        ApiUtils.uid = headers.get("UID");
+
         Intent intent = new Intent(this, LeagueInterestActivity.class);
-        intent.putExtra("accessToken", headers.get("Access-Token"));
-        intent.putExtra("client", headers.get("Client"));
-        intent.putExtra("uid", headers.get("UID"));
         startActivity(intent);
     }
 }

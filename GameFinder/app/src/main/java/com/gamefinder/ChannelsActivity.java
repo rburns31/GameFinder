@@ -27,12 +27,6 @@ public class ChannelsActivity extends AppCompatActivity {
         // The layout element which will hold the list view
         final ListView listView = (ListView) findViewById(R.id.channel_listview);
 
-        // Get the pertinent info passed into this activity from the last activity
-        Intent intent = getIntent();
-        final String accessToken = intent.getStringExtra("accessToken");
-        final String client = intent.getStringExtra("client");
-        final String uid = intent.getStringExtra("uid");
-
         // Populate the channels list
         List<String> defaultChannelNames = Arrays.asList(getResources().getStringArray(R.array.defaultChannels));
         System.out.println(defaultChannelNames.get(0));
@@ -80,11 +74,8 @@ public class ChannelsActivity extends AppCompatActivity {
                     }
                 });*/
 
-                // Open the games screen and pass in the authentication headers
+                // Open the games screen
                 Intent nextIntent = new Intent(thisActivity, GamesScreenActivity.class);
-                nextIntent.putExtra("accessToken", accessToken);
-                nextIntent.putExtra("client", client);
-                nextIntent.putExtra("uid", uid);
                 startActivity(nextIntent);
             }
         });

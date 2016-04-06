@@ -29,11 +29,6 @@ public class TvSetupActivity extends AppCompatActivity {
 
         final Context thisContext = this;
 
-        Intent intent = getIntent();
-        final String accessToken = intent.getStringExtra("accessToken");
-        final String client = intent.getStringExtra("client");
-        final String uid = intent.getStringExtra("uid");
-
         final Button nextButton = (Button) findViewById(R.id.nextButton);
         final EditText tvConfigName = (EditText) findViewById(R.id.tvConfigName);
         final Spinner tvBrandSpinner = (Spinner) findViewById(R.id.tvBrandSpinner);
@@ -85,7 +80,8 @@ public class TvSetupActivity extends AppCompatActivity {
                     tv.setCable_company(cableSpinner.getSelectedItem().toString());
                     televisionBody.setTelevision(tv);
 
-                    Call<List<TelevisionResponse>> call = ApiUtils.service.postTelevisions(accessToken,client,uid,televisionBody);
+                    Call<List<TelevisionResponse>> call
+                            = ApiUtils.service.postTelevisions(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid, televisionBody);
                     call.enqueue(new Callback<List<TelevisionResponse>>() {
                         @Override
                         public void onResponse(Call<List<TelevisionResponse>> call, Response<List<TelevisionResponse>> response) {
@@ -98,9 +94,6 @@ public class TvSetupActivity extends AppCompatActivity {
                         }
                     });
                 }
-                nextIntent.putExtra("accessToken", accessToken);
-                nextIntent.putExtra("client", client);
-                nextIntent.putExtra("uid", uid);
                 startActivity(nextIntent);
             }
         });

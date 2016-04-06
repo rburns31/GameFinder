@@ -35,13 +35,9 @@ public class GamesScreenActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        Intent intent = getIntent();
-        final String accessToken = intent.getStringExtra("accessToken");
-        final String client = intent.getStringExtra("client");
-        final String uid = intent.getStringExtra("uid");
-
         try {
-            Call<List<GamesResponse>> call = ApiUtils.service.getGames(accessToken, client, uid);
+            Call<List<GamesResponse>> call
+                    = ApiUtils.service.getGames(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
             call.enqueue(new Callback<List<GamesResponse>>() {
                 @Override
                 public void onResponse(Call<List<GamesResponse>> call, Response<List<GamesResponse>> response) {
@@ -75,9 +71,9 @@ public class GamesScreenActivity extends AppCompatActivity {
                                             gamesToDisplay.add(game);
                                         }
                                     }
-                                    adapter = new RecyclerAdapter(gamesToDisplay);
+                                    adapter = new GamesRecyclerAdapter(gamesToDisplay);
                                 } else {
-                                    adapter = new RecyclerAdapter(responseBody);
+                                    adapter = new GamesRecyclerAdapter(responseBody);
                                 }
                                 recyclerView.setAdapter(adapter);
                             }
@@ -86,7 +82,7 @@ public class GamesScreenActivity extends AppCompatActivity {
                             public void onNothingSelected(AdapterView<?> parentView) { }
                         });
 
-                        adapter = new RecyclerAdapter(gamesToDisplay);
+                        adapter = new GamesRecyclerAdapter(gamesToDisplay);
                         recyclerView.setAdapter(adapter);
                     }
                 }

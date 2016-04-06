@@ -36,12 +36,6 @@ public class TeamInterestActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Pull all relevant information out of the intent
-        Intent intent = getIntent();
-        final String accessToken = intent.getStringExtra("accessToken");
-        final String client = intent.getStringExtra("client");
-        final String uid = intent.getStringExtra("uid");
-
         // If this is the first team interest screen then populate the list of all competitors and show the help dialog
         if (competitorsList == null) {
             AlertDialog dialog = new AlertDialog.Builder(TeamInterestActivity.this).create();
@@ -127,7 +121,8 @@ public class TeamInterestActivity extends AppCompatActivity {
                     preference.setUser(user);
 
                     // putPreferences API hit,
-                    Call<List<PreferencesResponse>> call = ApiUtils.service.putPreferences(accessToken, client, uid, preference);
+                    Call<List<PreferencesResponse>> call
+                            = ApiUtils.service.putPreferences(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid, preference);
                     call.enqueue(new Callback<List<PreferencesResponse>>() {
                         @Override
                         public void onResponse(Call<List<PreferencesResponse>> call, retrofit2.Response<List<PreferencesResponse>> response) {
@@ -145,9 +140,6 @@ public class TeamInterestActivity extends AppCompatActivity {
                     });
                 }
                 // Start the next activity
-                nextIntent.putExtra("accessToken", accessToken);
-                nextIntent.putExtra("client", client);
-                nextIntent.putExtra("uid", uid);
                 startActivity(nextIntent);
             }
         });

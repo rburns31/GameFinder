@@ -19,11 +19,11 @@ import java.util.List;
  *
  * Created by Paul on 3/31/2016.
  */
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
+public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdapter.ViewHolder> {
     private List<GamesResponse> gamesList;
     private Context parentContext;
 
-    public RecyclerAdapter(List<GamesResponse> gamesList){
+    public GamesRecyclerAdapter(List<GamesResponse> gamesList){
         this.gamesList = gamesList;
         System.out.println("From RecyclerAdapter, Game List Size: " + gamesList.size());
     }

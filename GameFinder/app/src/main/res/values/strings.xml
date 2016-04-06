@@ -41,6 +41,7 @@
     <string name="tvConfigName">Tv Configuration Name</string>
 
     <string name="teamName">Team Name</string>
+    <string name="leagueName">League Name</string>
     <string name="gameName">Game Name</string>
     <string name="gameLeague">Game League</string>
     <string name="gameRating">Game Rating</string>

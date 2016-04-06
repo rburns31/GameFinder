@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -28,6 +30,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
      */
     private List<LeaguesResponse> responseBody;
     private static List<List<CompetitorsResponse>> competitors;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,18 +41,19 @@ public class LeagueInterestActivity extends AppCompatActivity {
                 .permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        // Pull all relevant information out of the intent
-        Intent intent = getIntent();
-        final String accessToken = intent.getStringExtra("accessToken");
-        final String client = intent.getStringExtra("client");
-        final String uid = intent.getStringExtra("uid");
+        // Set up the recycler view which holds the league cards
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // getLeagues API hit, sets the list's entries to the values in the response
-        Call<List<LeaguesResponse>> getLeaguesCall = ApiUtils.service.getLeagues(accessToken, client, uid);
+        Call<List<LeaguesResponse>> getLeaguesCall
+                = ApiUtils.service.getLeagues(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
         getLeaguesApiHit(getLeaguesCall);
 
         // getLeaguesPrefs API hit, TODO: set the preferences from the server's current values
-        Call<List<PreferencesResponse>> getLeaguesPrefsCall = ApiUtils.service.getLeaguesPrefs(accessToken, client, uid);
+        Call<List<PreferencesResponse>> getLeaguesPrefsCall
+                = ApiUtils.service.getLeaguesPrefs(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
         getLeaguesPrefsApiHit(getLeaguesPrefsCall);
 
         // Handle the next button being clicked
@@ -86,7 +90,8 @@ public class LeagueInterestActivity extends AppCompatActivity {
                 preference.setUser(user);
 
                 // putPreferences API hit,
-                Call<List<PreferencesResponse>> call = ApiUtils.service.putPreferences(accessToken, client, uid, preference);
+                Call<List<PreferencesResponse>> call
+                        = ApiUtils.service.putPreferences(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid, preference);
                 call.enqueue(new Callback<List<PreferencesResponse>>() {
                     @Override
                     public void onResponse(Call<List<PreferencesResponse>> call, retrofit2.Response<List<PreferencesResponse>> response) {
@@ -96,7 +101,8 @@ public class LeagueInterestActivity extends AppCompatActivity {
                             // If a non-zero preference, (and not PGA), then add those teams to the competitors list
                             for (int i = 0; i < numLeagues; i++) {
                                 if (ratings[i] > 0 && leagueIds[i] != 17) {
-                                    Call<List<CompetitorsResponse>> getCompetitorsCall = ApiUtils.service.getCompetitors(String.valueOf(leagueIds[i]), accessToken, client, uid);
+                                    Call<List<CompetitorsResponse>> getCompetitorsCall
+                                            = ApiUtils.service.getCompetitors(String.valueOf(leagueIds[i]), ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
                                     try {
                                         List<CompetitorsResponse> responseBody = getCompetitorsCall.execute().body();
                                         competitors.add(responseBody);
@@ -111,12 +117,6 @@ public class LeagueInterestActivity extends AppCompatActivity {
                             if (competitors.size() == 0) {
                                 nextIntent = new Intent(LeagueInterestActivity.this, TvSetupActivity.class);
                             }
-                            //Bundle bundleObject = new Bundle();
-                            //bundleObject.putSerializable("competitorsList", (Serializable) competitors);
-                            //nextIntent.putExtras(bundleObject);
-                            nextIntent.putExtra("accessToken", accessToken);
-                            nextIntent.putExtra("client", client);
-                            nextIntent.putExtra("uid", uid);
                             startActivity(nextIntent);
                         } else {
                             System.out.println("Response failure when putting league preferences");
@@ -157,11 +157,9 @@ public class LeagueInterestActivity extends AppCompatActivity {
                     }
                     responseBody = supported;
 
-                    ArrayAdapter<LeaguesResponse> adapter
-                            = new LeagueListViewAdapter(thisActivity, R.layout.item_listview, responseBody);
-
-                    ListView listView = (ListView) findViewById(R.id.league_listview);
-                    listView.setAdapter(adapter);
+                    // Set the adapter to display the current league's team cards
+                    final RecyclerView.Adapter adapter = new LeagueInterestRecyclerAdapter(responseBody);
+                    recyclerView.setAdapter(adapter);
                 } else {
                     System.out.println("Response failure when getting leagues");
                 }
