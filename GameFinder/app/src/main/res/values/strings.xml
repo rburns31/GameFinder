@@ -48,4 +48,5 @@
     <string name="gameStartTime">Game Start Time</string>
     <string name="gameNetwork">Game Network</string>
     <string name="gameImage">Game Image</string>
+    <string name="watchButton">Watch</string>
 </resources>
