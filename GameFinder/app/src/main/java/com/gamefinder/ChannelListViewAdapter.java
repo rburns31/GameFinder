@@ -1,10 +1,16 @@
 package com.gamefinder;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.Configuration;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.TextKeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -31,7 +37,7 @@ public class ChannelListViewAdapter extends ArrayAdapter<Channel> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+        final ViewHolder holder;
         LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null) {

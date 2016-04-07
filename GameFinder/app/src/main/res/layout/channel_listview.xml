@@ -2,17 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:descendantFocusability="blocksDescendants"
     android:orientation="horizontal">
-
-    <EditText
-        android:id="@+id/channelNumberField"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:maxWidth="20dp"
-        android:minWidth="20dp"
-        android:paddingTop="10dp"
-        android:inputType="phone" />
 
     <TextView
         android:id="@+id/channelName"
@@ -22,5 +12,15 @@
         android:layout_weight="0.5"
         android:gravity="center"
         android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/channelNumberField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="100dp"
+        android:minWidth="100dp"
+        android:paddingTop="10dp"
+        android:gravity="center"
+        android:inputType="phone"/>
 
 </LinearLayout>
