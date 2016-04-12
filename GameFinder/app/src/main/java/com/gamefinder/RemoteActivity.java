@@ -3,9 +3,11 @@ package com.gamefinder;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.hardware.ConsumerIrManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -42,6 +44,11 @@ public class RemoteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
 
         setUp(RemoteActivity.this);
     }
@@ -181,5 +188,11 @@ public class RemoteActivity extends AppCompatActivity {
         //System.out.println("Duration Pattern: " + durationPattern);
 
         return durationPattern;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        startActivity(new Intent(this, GamesScreenActivity.class));
+        return true;
     }
 }

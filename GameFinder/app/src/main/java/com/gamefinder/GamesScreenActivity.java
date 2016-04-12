@@ -1,15 +1,18 @@
 package com.gamefinder;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -20,9 +23,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ *
+ * Code for creating a drawer layout was adapted from this source: http://blog.teamtreehouse.com/add-navigation-drawer-android
+ */
 public class GamesScreenActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
+    private ActionBarDrawerToggle drawerToggle;
 
     private AppCompatActivity thisActivity = this;
 
@@ -35,6 +43,48 @@ public class GamesScreenActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        // Set up the side drawer list
+        ListView drawer = (ListView)findViewById(R.id.drawer);
+        final String[] drawerItems = { "Update Interests", "Manage TVs", "Remote", "Sign Out" };
+        drawer.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, drawerItems));
+        drawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Toast.makeText(GamesScreenActivity.this, drawerItems[position], Toast.LENGTH_SHORT).show();
+                if (drawerItems[position].equals("Remote")) {
+                    startActivity(new Intent(thisActivity, RemoteActivity.class));
+                }
+            }
+        });
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
+
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerToggle = new ActionBarDrawerToggle(this,
+                drawerLayout, R.string.drawer_open, R.string.drawer_close) {
+
+            // Called when a drawer has settled in a completely open state
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                getSupportActionBar().setTitle("Options Menu");
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            // Called when a drawer has settled in a completely closed state
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                getSupportActionBar().setTitle(R.string.title_activity_games_screen);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+
+        drawerToggle.setDrawerIndicatorEnabled(true);
+        drawerLayout.addDrawerListener(drawerToggle);
+
+        //
         try {
             Call<List<GamesResponse>> call
                     = ApiUtils.service.getGames(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
@@ -98,15 +148,19 @@ public class GamesScreenActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.games_screen_menu, menu);
-        return true;
+    protected void onPostCreate(Bundle savedInstanceState){
+            super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        startActivity(new Intent(this, RemoteActivity.class));
-        return true;
+        return drawerToggle.onOptionsItemSelected(item);
     }
 }
