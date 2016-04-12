@@ -36,22 +36,25 @@ public class RemoteActivity extends AppCompatActivity {
     /**
      * Holds the instance of the device's IR hardware so codes can be transmitted via it
      */
-    private ConsumerIrManager irManager;
+    public static ConsumerIrManager irManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote);
 
+        setUp(RemoteActivity.this);
+    }
+
+    public static void setUp(Context context) {
         // Gain access to the device's IR hardware
-        Context mContext = RemoteActivity.this;
-        irManager = (ConsumerIrManager) mContext.getSystemService(CONSUMER_IR_SERVICE);
+        irManager = (ConsumerIrManager) context.getSystemService(CONSUMER_IR_SERVICE);
 
         // Read in the hex.csv file and write the outputted codes to the console
         BufferedReader br;
         try {
             br = new BufferedReader(new InputStreamReader(
-                    mContext.getResources().openRawResource(R.raw.hex)));
+                    context.getResources().openRawResource(R.raw.hex)));
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = br.readLine()) != null) {
@@ -59,7 +62,7 @@ public class RemoteActivity extends AppCompatActivity {
                 sb.append(parts[0]).append(",");
                 sb.append(count2duration(hex2dec(parts[1]))).append("\n");
             }
-            System.out.println(sb);
+            //System.out.println(sb);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,7 +71,7 @@ public class RemoteActivity extends AppCompatActivity {
         BufferedReader br2;
         try {
             br2 = new BufferedReader(new InputStreamReader(
-                    mContext.getResources().openRawResource(R.raw.codes)));
+                    context.getResources().openRawResource(R.raw.codes)));
             String line;
             while ((line = br2.readLine()) != null) {
                 String[] parts = line.split(",");
@@ -121,7 +124,7 @@ public class RemoteActivity extends AppCompatActivity {
      * @param irData A string of hex values separated by spaces
      * @return A string of decimal values separated by commas, the first element is the frequency
      */
-    private String hex2dec(String irData) {
+    public static String hex2dec(String irData) {
         List<String> list = new ArrayList<>(Arrays.asList(irData.split(" ")));
         list.remove(0); // dummy
         int frequency = Integer.parseInt(list.remove(0), 16); // frequency
@@ -152,7 +155,7 @@ public class RemoteActivity extends AppCompatActivity {
      * @return A string of decimal values representing the duration of bursts to be transmitted,
      *           separated by commas where the first element is the frequency
      */
-    private String count2duration(String countPattern) {
+    public static String count2duration(String countPattern) {
         List<String> list = new ArrayList<>(Arrays.asList(countPattern.split(",")));
         int thisFreq = Integer.parseInt(list.get(0));
         int pulses = 1000000 / thisFreq;

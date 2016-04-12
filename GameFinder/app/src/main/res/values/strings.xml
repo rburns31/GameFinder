@@ -49,4 +49,6 @@
     <string name="gameNetwork">Game Network</string>
     <string name="gameImage">Game Image</string>
     <string name="watchButton">Watch</string>
+    <string name="watch">Watch</string>
+    <string name="watchDescription">Watch Button</string>
 </resources>

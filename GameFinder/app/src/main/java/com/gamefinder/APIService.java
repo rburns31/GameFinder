@@ -83,5 +83,4 @@ public interface APIService {
     Call<List<ChannelResponse>> postChannels(@Header("Access-Token")String accessToken,
                                                    @Header("Client")String client,
                                                    @Header("UID")String uid, @Body ChannelResponse channels);
-
 }

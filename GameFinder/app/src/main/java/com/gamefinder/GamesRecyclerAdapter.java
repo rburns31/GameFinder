@@ -1,39 +1,68 @@
 package com.gamefinder;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.hardware.ConsumerIrManager;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+
 /**
  *
- * Created by Paul on 3/31/2016.
  */
 public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdapter.ViewHolder> {
     private List<GamesResponse> gamesList;
     private Context parentContext;
+    /**
+     * The channels which the user has inputted numbers for on the current tv configuration
+     */
+    private HashMap<String, String> currChannels;
 
-    public GamesRecyclerAdapter(List<GamesResponse> gamesList){
+    public GamesRecyclerAdapter(List<GamesResponse> gamesList) {
         this.gamesList = gamesList;
         System.out.println("From RecyclerAdapter, Game List Size: " + gamesList.size());
+
+        // Get stored channels for this user for the current tv configuration
+        Call<List<ChannelResponse>> getChannelsCall
+                = ApiUtils.service.getChannels(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
+        getChannelsApiHit(getChannelsCall);
+
+        // Temporary fix until channels api hit is functional, hard-code some channels
+        if (currChannels == null) {
+            currChannels = new HashMap<>();
+            currChannels.put("ESPN", "12");
+            currChannels.put("NBA TV", "8");
+            currChannels.put("TNT", "56");
+        }
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // Create a new view
         parentContext = parent.getContext();
-        View view = LayoutInflater.from(parentContext)
-                .inflate(R.layout.game_card, parent, false);
+        View view = LayoutInflater.from(parentContext).inflate(R.layout.game_card, parent, false);
+
+        RemoteActivity.setUp(parentContext);
 
         return new ViewHolder(view);
     }
@@ -46,8 +75,54 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
         String team2 = game.getCompetitor_2().getName();
         String league = game.getLeague().getName();
         String startTime = game.getStart_time();
-        String network = game.getNetwork();
+        final String network = game.getNetwork();
         String rating = game.getScore();
+
+        // Handle the watch button being clicked
+        holder.watchImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currChannels.containsKey(network)) {
+                    Toast toast = Toast.makeText(parentContext,
+                            "Switching the channel to " + network, Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.BOTTOM, 0, 0);
+                    toast.show();
+
+                    // Send each digit of the stored channel number
+                    String channelNum = currChannels.get(network);
+                    for (int i = 0; i < channelNum.length(); i++) {
+                        String id = "toshiba_" + channelNum.charAt(i);
+                        int[] payload = RemoteActivity.controls.get(id);
+                        Integer frequency = RemoteActivity.frequencies.get(id);
+
+                        if (payload != null && frequency != null) {
+                            RemoteActivity.irManager.transmit(frequency, payload);
+                        }
+                    }
+
+                    // Send an enter signal
+                    String id = "toshiba_enter";
+                    int[] payload = RemoteActivity.controls.get(id);
+                    Integer frequency = RemoteActivity.frequencies.get(id);
+
+                    if (payload != null && frequency != null) {
+                        RemoteActivity.irManager.transmit(frequency, payload);
+                    }
+                } else {
+                    AlertDialog dialog = new AlertDialog.Builder(parentContext).create();
+                    dialog.setTitle("Channel Input");
+                    dialog.setMessage("You have not set a channel number for the current network " +
+                            "and TV configuration. Please enter the number below for future use.");
+                    dialog.setButton(AlertDialog.BUTTON_NEUTRAL, "SAVE",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    dialog.show();
+                }
+            }
+        });
 
         // The set of leagues whose logos are supported to be displayed
         HashSet<String> supportedLeagues = new HashSet<>();
@@ -122,6 +197,40 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
         return gamesList.size();
     }
 
+    /**
+     *
+     */
+    private void getChannelsApiHit(Call<List<ChannelResponse>> call) {
+        //final AppCompatActivity thisActivity = this;
+
+        call.enqueue(new Callback<List<ChannelResponse>>() {
+            @Override
+            public void onResponse(Call<List<ChannelResponse>> call, retrofit2.Response<List<ChannelResponse>> response) {
+                if (response.isSuccess()) {
+                    List<ChannelResponse> channelsResponse = response.body();
+                    System.out.println(channelsResponse.get(0).getChannels());
+
+                    /**HashSet<String> supportedLeagues = new HashSet<>();
+
+                    List<ChannelResponse> supported = new ArrayList<>();
+                    for (ChannelResponse channel: channelsResponse) {
+                        if (supportedLeagues.contains(channel.getName())) {
+                            supported.add(channel);
+                        }
+                    }
+                    channelsResponse = supported;*/
+                } else {
+                    System.out.println("Response failure when getting channels");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ChannelResponse>> call, Throwable t) {
+                System.out.println(t.getMessage());
+            }
+        });
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         protected TextView gameName;
         protected TextView gameLeague;
@@ -130,6 +239,7 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
         protected TextView gameNetwork;
         protected ImageView thumbnail1;
         protected ImageView thumbnail2;
+        protected ImageView watchImage;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -140,6 +250,7 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
             gameNetwork = (TextView) itemView.findViewById(R.id.gameNetwork);
             thumbnail1 = (ImageView) itemView.findViewById(R.id.thumbnail1);
             thumbnail2 = (ImageView) itemView.findViewById(R.id.thumbnail2);
+            watchImage = (ImageView) itemView.findViewById(R.id.watchButton);
         }
     }
 }

@@ -88,12 +88,17 @@
         <ImageButton style="@style/AppTheme"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:text="Watch"
+            android:text="@string/watch"
             android:id="@+id/watchButton"
             android:src="@drawable/ic_tv_black_18dp"
             android:background="@color/white"
+            android:contentDescription="@string/watchDescription"
+            android:layout_toRightOf="@+id/gameStartTime"
+            android:layout_below="@+id/gameName"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="false"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true" />
+            android:paddingLeft="80dp" />
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

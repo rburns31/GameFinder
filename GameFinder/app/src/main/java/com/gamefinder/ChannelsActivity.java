@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -22,6 +23,8 @@ public class ChannelsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channels);
 
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
         final AppCompatActivity thisActivity = this;
 
         // The layout element which will hold the list view
@@ -29,11 +32,12 @@ public class ChannelsActivity extends AppCompatActivity {
 
         // Populate the channels list
         List<String> defaultChannelNames = Arrays.asList(getResources().getStringArray(R.array.defaultChannels));
-        System.out.println(defaultChannelNames.get(0));
+
         List<Channel> defaultChannels = new ArrayList<>();
         for (int i = 0; i < defaultChannelNames.size(); i++) {
             defaultChannels.add(new Channel("0", defaultChannelNames.get(i), "0"));
         }
+
         ArrayAdapter<Channel> adapter = new ChannelListViewAdapter(this, R.layout.channel_listview, defaultChannels);
         listView.setAdapter(adapter);
 
