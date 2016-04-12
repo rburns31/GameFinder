@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.List;
 
 import jp.wasabeef.picasso.transformations.GrayscaleTransformation;
@@ -22,20 +23,33 @@ import jp.wasabeef.picasso.transformations.GrayscaleTransformation;
 public class TeamInterestRecyclerAdapter extends RecyclerView.Adapter<TeamInterestRecyclerAdapter.ViewHolder> {
     private boolean[] selectedTeams;
     private List<CompetitorsResponse> teamsList;
+    private List<PreferencesResponse> prevPref;
     private Context parentContext;
 
-    public TeamInterestRecyclerAdapter(List<CompetitorsResponse> teamsList) {
+    public TeamInterestRecyclerAdapter(List<CompetitorsResponse> teamsList, List<PreferencesResponse> prevPref) {
         this.teamsList = teamsList;
+        this.prevPref = prevPref;
         selectedTeams = new boolean[teamsList.size()];
-        System.out.println(teamsList.get(0).getName());
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // Create a new view
         parentContext = parent.getContext();
-        View view = LayoutInflater.from(parentContext)
-                .inflate(R.layout.team_card, parent, false);
+        View view = LayoutInflater.from(parentContext).inflate(R.layout.team_card, parent, false);
+
+        // Populate any previously stored competitor preferences from the server
+        HashMap<String, PreferencesResponse> idToPref = new HashMap<>();
+        for (PreferencesResponse pref : prevPref) {
+            idToPref.put(pref.getPreference_id(), pref);
+        }
+
+        for (int i = 0; i < teamsList.size(); i++) {
+            CompetitorsResponse competitor = teamsList.get(i);
+            if (idToPref.containsKey(competitor.getId())) {
+                selectedTeams[i] = true;
+            }
+        }
 
         return new ViewHolder(view);
     }

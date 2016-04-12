@@ -4,21 +4,20 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
-import android.hardware.ConsumerIrManager;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,6 +36,8 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
      * The channels which the user has inputted numbers for on the current tv configuration
      */
     private HashMap<String, String> currChannels;
+
+    private String currTvBrand = "Toshiba";
 
     public GamesRecyclerAdapter(List<GamesResponse> gamesList) {
         this.gamesList = gamesList;
@@ -85,13 +86,13 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
                 if (currChannels.containsKey(network)) {
                     Toast toast = Toast.makeText(parentContext,
                             "Switching the channel to " + network, Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.BOTTOM, 0, 0);
+                    toast.setGravity(Gravity.BOTTOM, 10, 0);
                     toast.show();
 
                     // Send each digit of the stored channel number
                     String channelNum = currChannels.get(network);
                     for (int i = 0; i < channelNum.length(); i++) {
-                        String id = "toshiba_" + channelNum.charAt(i);
+                        String id = currTvBrand.toLowerCase() + "_" + channelNum.charAt(i);
                         int[] payload = RemoteActivity.controls.get(id);
                         Integer frequency = RemoteActivity.frequencies.get(id);
 
@@ -101,7 +102,7 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
                     }
 
                     // Send an enter signal
-                    String id = "toshiba_enter";
+                    String id = currTvBrand.toLowerCase() + "_enter";
                     int[] payload = RemoteActivity.controls.get(id);
                     Integer frequency = RemoteActivity.frequencies.get(id);
 
@@ -113,9 +114,50 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
                     dialog.setTitle("Channel Input");
                     dialog.setMessage("You have not set a channel number for the current network " +
                             "and TV configuration. Please enter the number below for future use.");
+
+                    final EditText channelNumField = new EditText(parentContext);
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.MATCH_PARENT);
+                    channelNumField.setLayoutParams(lp);
+                    channelNumField.setPadding(80, 80, 80, 80);
+                    channelNumField.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    channelNumField.setSingleLine(true);
+                    channelNumField.setGravity(Gravity.CENTER_HORIZONTAL);
+                    dialog.setView(channelNumField);
+
                     dialog.setButton(AlertDialog.BUTTON_NEUTRAL, "SAVE",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
+                                    // TODO: Save this to the server
+                                    Channel[] channels = new Channel[1];
+                                    channels[0] = new Channel(channelNumField.getText().toString(), network, "1");
+                                    ChannelResponse channelResponse = new ChannelResponse(channels);
+
+                                    Call<List<ChannelResponse>> call = ApiUtils.service.postChannels(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid, channelResponse);
+                                    call.enqueue(new Callback<List<ChannelResponse>>() {
+                                        @Override
+                                        public void onResponse(Call<List<ChannelResponse>> call, retrofit2.Response<List<ChannelResponse>> response) {
+                                            if (response.isSuccess()) {
+                                                List<ChannelResponse> responseBody = response.body();
+                                                for (int i = 0; i < responseBody.size(); i++) {
+                                                    System.out.println(responseBody.get(i));
+                                                    //channels.add(responseBody.get(i).getName());
+                                                    //ids.add(Integer.parseInt(responseBody.get(i).getId())); //ids not used yet
+                                                }
+                                            } else {
+                                                System.out.println("Response failure when trying to post channel");
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<List<ChannelResponse>> call, Throwable t) {
+                                            System.out.println(t.getMessage());
+                                        }
+                                    });
+
+                                    currChannels.put(network, channelNumField.getText().toString());
+
                                     dialog.dismiss();
                                 }
                             });
@@ -208,7 +250,7 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
             public void onResponse(Call<List<ChannelResponse>> call, retrofit2.Response<List<ChannelResponse>> response) {
                 if (response.isSuccess()) {
                     List<ChannelResponse> channelsResponse = response.body();
-                    //System.out.println(channelsResponse.get(0).getChannels());
+                    System.out.println(channelsResponse.get(0));
 
                     /**HashSet<String> supportedLeagues = new HashSet<>();
 

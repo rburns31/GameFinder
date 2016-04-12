@@ -39,8 +39,8 @@ public interface APIService {
                                            @Header("UID")String uid);
 
     @Headers("Token-Type: Bearer")
-    @GET("user/preferences")
-    Call<List<PreferencesResponse>> getPrefs(@Header("Access-Token")String accessToken,
+    @GET("user/preferences/competitor")
+    Call<List<PreferencesResponse>> getCompetitorsPrefs(@Header("Access-Token")String accessToken,
                                                     @Header("Client")String client,
                                                     @Header("UID")String uid);
 

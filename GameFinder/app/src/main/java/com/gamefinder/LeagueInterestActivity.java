@@ -116,6 +116,9 @@ public class LeagueInterestActivity extends AppCompatActivity {
                             if (competitors.size() == 0) {
                                 nextIntent = new Intent(LeagueInterestActivity.this, TvSetupActivity.class);
                             }
+                            if (getIntent().getBooleanExtra("Update", false)) {
+                                nextIntent.putExtra("Update", true);
+                            }
                             startActivity(nextIntent);
                         } else {
                             System.out.println("Response failure when putting league preferences");

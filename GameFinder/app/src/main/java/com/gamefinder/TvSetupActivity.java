@@ -27,8 +27,6 @@ public class TvSetupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tv_setup);
 
-        final Context thisContext = this;
-
         final Button nextButton = (Button) findViewById(R.id.nextButton);
         final EditText tvConfigName = (EditText) findViewById(R.id.tvConfigName);
         final Spinner tvBrandSpinner = (Spinner) findViewById(R.id.tvBrandSpinner);
@@ -67,7 +65,7 @@ public class TvSetupActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
 
-        final Intent nextIntent = new Intent(this, ChannelsActivity.class);
+        final Intent nextIntent = new Intent(this, GamesScreenActivity.class);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

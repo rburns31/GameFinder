@@ -50,9 +50,15 @@ public class GamesScreenActivity extends AppCompatActivity {
         drawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(GamesScreenActivity.this, drawerItems[position], Toast.LENGTH_SHORT).show();
                 if (drawerItems[position].equals("Remote")) {
                     startActivity(new Intent(thisActivity, RemoteActivity.class));
+                } else if (drawerItems[position].equals("Update Interests")) {
+                    Intent intent = new Intent(thisActivity, LeagueInterestActivity.class);
+                    intent.putExtra("Update", true);
+                    startActivity(intent);
+                } else if (drawerItems[position].equals("Sign Out")) {
+                    // TODO: See if this counts as signing out or not
+                    startActivity(new Intent(thisActivity, LoginActivity.class));
                 }
             }
         });

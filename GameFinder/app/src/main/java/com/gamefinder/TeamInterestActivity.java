@@ -22,6 +22,7 @@ import retrofit2.Callback;
  *
  */
 public class TeamInterestActivity extends AppCompatActivity {
+    private List<PreferencesResponse> prevPref;
     private static List<List<CompetitorsResponse>> competitorsList;
     private static int currentLeagueLocation = 0;
 
@@ -35,6 +36,11 @@ public class TeamInterestActivity extends AppCompatActivity {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // getCompetitorsPrefs API hit, passes the stored preferences to be populated initially
+        Call<List<PreferencesResponse>> getCompetitorsPrefsCall
+                = ApiUtils.service.getCompetitorsPrefs(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
+        prevPref = getCompetitorsPrefsApiHit(getCompetitorsPrefsCall);
 
         // If this is the first team interest screen then populate the list of all competitors and show the help dialog
         if (competitorsList == null) {
@@ -66,8 +72,12 @@ public class TeamInterestActivity extends AppCompatActivity {
         if (currentLeagueLocation < competitorsList.size() - 1) {
             currentLeagueLocation++;
             nextIntent = new Intent(this, TeamInterestActivity.class);
+            nextIntent.putExtra("Update", true);
+        } else if (getIntent().getBooleanExtra("Update", false)) {
+            nextIntent = new Intent(this, GamesScreenActivity.class);
         } else {
             nextIntent = new Intent(this, TvSetupActivity.class);
+            nextIntent.putExtra("Update", true);
         }
 
         // Filter out all of the duplicates, TODO: determine how this affects games list
@@ -82,7 +92,7 @@ public class TeamInterestActivity extends AppCompatActivity {
         }
 
         // Set the adapter to display the current league's team cards
-        final RecyclerView.Adapter adapter = new TeamInterestRecyclerAdapter(filteredTeamsList);
+        final RecyclerView.Adapter adapter = new TeamInterestRecyclerAdapter(filteredTeamsList, prevPref);
         recyclerView.setAdapter(adapter);
 
         // Handle the next button being clicked
@@ -143,5 +153,31 @@ public class TeamInterestActivity extends AppCompatActivity {
                 startActivity(nextIntent);
             }
         });
+    }
+
+    /**
+     *
+     */
+    public static List<PreferencesResponse> getCompetitorsPrefsApiHit(Call<List<PreferencesResponse>> call) {
+        final List<PreferencesResponse> prefs = new ArrayList<>();
+        call.enqueue(new Callback<List<PreferencesResponse>>() {
+            @Override
+            public void onResponse(Call<List<PreferencesResponse>> call, retrofit2.Response<List<PreferencesResponse>> response) {
+                if (response.isSuccess()) {
+                    for (PreferencesResponse pref: response.body()) {
+                        prefs.add(pref);
+                    }
+                    System.out.println(prefs);
+                } else {
+                    System.out.println("Response failure when getting league preferences");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PreferencesResponse>> call, Throwable t) {
+                System.out.println(t.getMessage());
+            }
+        });
+        return prefs;
     }
 }
