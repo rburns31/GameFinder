@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
         // Verify that the phone's keyboard is closed
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         // Load the GameFinder logo
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
