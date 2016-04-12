@@ -1,6 +1,7 @@
 package com.gamefinder;
 
 /**
+ *
  * Created by Kevin on 3/7/2016.
  */
 public class PreferencesResponse {

@@ -7,9 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -29,6 +27,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
      * Holds the response from the getLeagues API hit
      */
     private List<LeaguesResponse> responseBody;
+    private List<PreferencesResponse> prevPref;
     private static List<List<CompetitorsResponse>> competitors;
     private RecyclerView recyclerView;
 
@@ -46,15 +45,15 @@ public class LeagueInterestActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        // getLeaguesPrefs API hit, passes the stored preferences to be populated initially
+        Call<List<PreferencesResponse>> getLeaguesPrefsCall
+                = ApiUtils.service.getLeaguesPrefs(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
+        prevPref = getLeaguesPrefsApiHit(getLeaguesPrefsCall);
+
         // getLeagues API hit, sets the list's entries to the values in the response
         Call<List<LeaguesResponse>> getLeaguesCall
                 = ApiUtils.service.getLeagues(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
         getLeaguesApiHit(getLeaguesCall);
-
-        // getLeaguesPrefs API hit, TODO: set the preferences from the server's current values
-        Call<List<PreferencesResponse>> getLeaguesPrefsCall
-                = ApiUtils.service.getLeaguesPrefs(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
-        getLeaguesPrefsApiHit(getLeaguesPrefsCall);
 
         // Handle the next button being clicked
         Button nextButton = (Button) findViewById(R.id.nextButton);
@@ -136,8 +135,6 @@ public class LeagueInterestActivity extends AppCompatActivity {
      *
      */
     private void getLeaguesApiHit(Call<List<LeaguesResponse>> call) {
-        final AppCompatActivity thisActivity = this;
-
         call.enqueue(new Callback<List<LeaguesResponse>>() {
             @Override
             public void onResponse(Call<List<LeaguesResponse>> call, retrofit2.Response<List<LeaguesResponse>> response) {
@@ -158,7 +155,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
                     responseBody = supported;
 
                     // Set the adapter to display the current league's team cards
-                    final RecyclerView.Adapter adapter = new LeagueInterestRecyclerAdapter(responseBody);
+                    final RecyclerView.Adapter adapter = new LeagueInterestRecyclerAdapter(responseBody, prevPref);
                     recyclerView.setAdapter(adapter);
                 } else {
                     System.out.println("Response failure when getting leagues");
@@ -175,17 +172,16 @@ public class LeagueInterestActivity extends AppCompatActivity {
     /**
      *
      */
-    private void getLeaguesPrefsApiHit(Call<List<PreferencesResponse>> call) {
-        //final AppCompatActivity thisActivity = this;
-
+    public static List<PreferencesResponse> getLeaguesPrefsApiHit(Call<List<PreferencesResponse>> call) {
+        final List<PreferencesResponse> prefs = new ArrayList<>();
         call.enqueue(new Callback<List<PreferencesResponse>>() {
             @Override
             public void onResponse(Call<List<PreferencesResponse>> call, retrofit2.Response<List<PreferencesResponse>> response) {
                 if (response.isSuccess()) {
-                    //responseBody = response.body();
-                    System.out.println(response.body().toString());
-
-                    //ListView listView = (ListView) findViewById(R.id.league_listview);
+                    for (PreferencesResponse pref: response.body()) {
+                        prefs.add(pref);
+                    }
+                    System.out.println(prefs);
                 } else {
                     System.out.println("Response failure when getting league preferences");
                 }
@@ -196,8 +192,13 @@ public class LeagueInterestActivity extends AppCompatActivity {
                 System.out.println(t.getMessage());
             }
         });
+        return prefs;
     }
 
+    /**
+     *
+     * @return
+     */
     public static Bundle getCompetitorsBundle() {
         Bundle bundle = new Bundle();
         bundle.putSerializable("competitorsList", (Serializable) competitors);

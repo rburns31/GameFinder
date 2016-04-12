@@ -1,6 +1,5 @@
 package com.gamefinder;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
@@ -13,9 +12,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import jp.wasabeef.picasso.transformations.GrayscaleTransformation;
 
 /**
  *
@@ -23,18 +22,32 @@ import jp.wasabeef.picasso.transformations.GrayscaleTransformation;
  */
 public class LeagueInterestRecyclerAdapter extends RecyclerView.Adapter<LeagueInterestRecyclerAdapter.ViewHolder> {
     private List<LeaguesResponse> leaguesList;
+    private List<PreferencesResponse> prevPref;
     private Context parentContext;
 
-    public LeagueInterestRecyclerAdapter(List<LeaguesResponse> leaguesList) {
+    public LeagueInterestRecyclerAdapter(List<LeaguesResponse> leaguesList, List<PreferencesResponse> prevPref) {
         this.leaguesList = leaguesList;
+        this.prevPref = prevPref;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // Create a new view
         parentContext = parent.getContext();
-        View view = LayoutInflater.from(parentContext)
-                .inflate(R.layout.league_card, parent, false);
+        View view = LayoutInflater.from(parentContext).inflate(R.layout.league_card, parent, false);
+
+        // Populate any previously stored league preferences from the server
+        HashMap<String, PreferencesResponse> idToPref = new HashMap<>();
+        for (PreferencesResponse pref : prevPref) {
+            idToPref.put(pref.getPreference_id(), pref);
+        }
+
+        for (LeaguesResponse league: leaguesList) {
+            if (idToPref.containsKey(league.getId())) {
+                PreferencesResponse thisPref = idToPref.get(league.getId());
+                league.setRatingStar(Float.parseFloat(thisPref.getAmount()));
+            }
+        }
 
         return new ViewHolder(view);
     }

@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Headers;
 import retrofit2.Call;
@@ -22,6 +24,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
+    private final AppCompatActivity thisActivity = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +33,8 @@ public class LoginActivity extends AppCompatActivity {
 
         // Verify that the phone's keyboard is closed
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         // Load the GameFinder logo
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
@@ -83,10 +88,15 @@ public class LoginActivity extends AppCompatActivity {
                                     });
                             alertDialog.show();
                         } else if (responseCode == 200) {
-                            AlertDialog alertDialog
-                                    = new AlertDialog.Builder(LoginActivity.this).create();
                             Headers headers = response.headers();
-                            openLeagues(headers);
+                            ApiUtils.accessToken = headers.get("Access-Token");
+                            ApiUtils.client = headers.get("Client");
+                            ApiUtils.uid = headers.get("UID");
+
+                            // Check if this user has any league preferences to determine where to direct them next
+                            Call<List<PreferencesResponse>> getLeaguesPrefsCall
+                                    = ApiUtils.service.getLeaguesPrefs(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
+                            getLeaguesPrefsApiHit(getLeaguesPrefsCall);
                         }
                     }
 
@@ -101,14 +111,32 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      *
-     * @param headers
      */
-    private void openLeagues(Headers headers) {
-        ApiUtils.accessToken = headers.get("Access-Token");
-        ApiUtils.client = headers.get("Client");
-        ApiUtils.uid = headers.get("UID");
+    private void getLeaguesPrefsApiHit(Call<List<PreferencesResponse>> call) {
+        final List<PreferencesResponse> prefs = new ArrayList<>();
+        call.enqueue(new Callback<List<PreferencesResponse>>() {
+            @Override
+            public void onResponse(Call<List<PreferencesResponse>> call, retrofit2.Response<List<PreferencesResponse>> response) {
+                if (response.isSuccess()) {
+                    for (PreferencesResponse pref: response.body()) {
+                        prefs.add(pref);
+                    }
+                    System.out.println("Prefs from LoginActivity: " + prefs);
 
-        Intent intent = new Intent(this, LeagueInterestActivity.class);
-        startActivity(intent);
+                    if (prefs.size() > 0) {
+                        startActivity(new Intent(thisActivity, GamesScreenActivity.class));
+                    } else {
+                        startActivity(new Intent(thisActivity, LeagueInterestActivity.class));
+                    }
+                } else {
+                    System.out.println("Response failure when getting league preferences");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PreferencesResponse>> call, Throwable t) {
+                System.out.println(t.getMessage());
+            }
+        });
     }
 }

@@ -208,7 +208,7 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
             public void onResponse(Call<List<ChannelResponse>> call, retrofit2.Response<List<ChannelResponse>> response) {
                 if (response.isSuccess()) {
                     List<ChannelResponse> channelsResponse = response.body();
-                    System.out.println(channelsResponse.get(0).getChannels());
+                    //System.out.println(channelsResponse.get(0).getChannels());
 
                     /**HashSet<String> supportedLeagues = new HashSet<>();
 
