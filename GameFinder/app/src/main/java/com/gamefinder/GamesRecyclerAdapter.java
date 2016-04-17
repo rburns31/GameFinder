@@ -18,9 +18,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import retrofit2.Call;
@@ -166,21 +164,14 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
             }
         });
 
-        // The set of leagues whose logos are supported to be displayed
-        HashSet<String> supportedLeagues = new HashSet<>();
-        supportedLeagues.addAll(Arrays.asList("NBA", "MLB", "NHL", "NFL", "MLS"));
-        if (!supportedLeagues.contains(league)) {
-            return;
-        }
-
         // Loads the logos into the image views on the game card
         Resources resources = parentContext.getResources();
 
-        String logoFile1 = team1.replaceAll("[ .&]", "_").toLowerCase();
+        String logoFile1 = team1.replaceAll("[ .&()-/']", "_").toLowerCase();
         //System.out.println(logoFile1);
-        String logoFile2 = team2.replaceAll("[ .&]", "_").toLowerCase();
+        String logoFile2 = team2.replaceAll("[ .&()-/']", "_").toLowerCase();
         //System.out.println(logoFile2);
-        String placeHolderLogoFile = league.replaceAll("[ .]", "_").toLowerCase() + "_logo";
+        String placeHolderLogoFile = league.replaceAll("[ .()-/']", "_").toLowerCase() + "_logo";
         //System.out.println(placeHolderLogoFile);
 
         int placeholderLogo = resources.getIdentifier(placeHolderLogoFile, "raw", parentContext.getPackageName());
@@ -222,6 +213,9 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
         String gameNetworkText = "Network: " + network;
         if (network == null) {
             gameNetworkText = "Network: Unavailable";
+            holder.watchImage.setVisibility(View.INVISIBLE);
+        } else {
+            holder.watchImage.setVisibility(View.VISIBLE);
         }
 
         holder.gameName.setText(gameNameText);

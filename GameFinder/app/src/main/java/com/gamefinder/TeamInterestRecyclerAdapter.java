@@ -64,9 +64,12 @@ public class TeamInterestRecyclerAdapter extends RecyclerView.Adapter<TeamIntere
         // Loads the logo into the image view on the team card
         Resources resources = parentContext.getResources();
 
-        String logoFile = name.replaceAll("[ .&]", "_").toLowerCase();
+        String logoFile = name.replaceAll("[ .&()-/']", "_").toLowerCase();
         //System.out.println(logoFile);
-        String placeHolderLogoFile = league.replaceAll("[ .&]", "_").toLowerCase() + "_logo";
+        String placeHolderLogoFile = league.replaceAll("[ .&()-/']", "_").toLowerCase() + "_logo";
+        if (league.contains("NCAA")) {
+            placeHolderLogoFile = "ncaa_logo";
+        }
         //System.out.println(placeHolderLogoFile);
 
         final int placeholderLogoId = resources.getIdentifier(placeHolderLogoFile, "raw", parentContext.getPackageName());
@@ -97,7 +100,7 @@ public class TeamInterestRecyclerAdapter extends RecyclerView.Adapter<TeamIntere
                     }
                 }
             });
-        } else if (league.equals("North American Soccer") || league.equals("European Soccer")) {
+        } else if (league.contains("Soccer")) {
             final int soccerLogoId = resources.getIdentifier("soccer", "raw", parentContext.getPackageName());
 
             Picasso.with(parentContext).load(soccerLogoId).fit().centerCrop().transform(new GrayscaleTransformation()).into(holder.thumbnail);
