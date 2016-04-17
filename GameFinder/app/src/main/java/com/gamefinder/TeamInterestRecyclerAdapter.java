@@ -23,20 +23,14 @@ import jp.wasabeef.picasso.transformations.GrayscaleTransformation;
 public class TeamInterestRecyclerAdapter extends RecyclerView.Adapter<TeamInterestRecyclerAdapter.ViewHolder> {
     private boolean[] selectedTeams;
     private List<CompetitorsResponse> teamsList;
-    private List<PreferencesResponse> prevPref;
+    //private List<PreferencesResponse> prevPref;
     private Context parentContext;
 
     public TeamInterestRecyclerAdapter(List<CompetitorsResponse> teamsList, List<PreferencesResponse> prevPref) {
         this.teamsList = teamsList;
-        this.prevPref = prevPref;
+        //this.prevPref = prevPref;
+        System.out.println(prevPref);
         selectedTeams = new boolean[teamsList.size()];
-    }
-
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // Create a new view
-        parentContext = parent.getContext();
-        View view = LayoutInflater.from(parentContext).inflate(R.layout.team_card, parent, false);
 
         // Populate any previously stored competitor preferences from the server
         HashMap<String, PreferencesResponse> idToPref = new HashMap<>();
@@ -50,72 +44,50 @@ public class TeamInterestRecyclerAdapter extends RecyclerView.Adapter<TeamIntere
                 selectedTeams[i] = true;
             }
         }
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // Create a new view
+        parentContext = parent.getContext();
+        View view = LayoutInflater.from(parentContext).inflate(R.layout.team_card, parent, false);
 
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         // Pull all of the useful information out of the CompetitorsResponse object
         CompetitorsResponse team = teamsList.get(position);
         String name = team.getName();
         String league = team.getLeagueName();
 
-        // Loads the logo into the image view on the team card
         Resources resources = parentContext.getResources();
 
-        String logoFile = name.replaceAll("[ .&()-/']", "_").toLowerCase();
-        //System.out.println(logoFile);
-        String placeHolderLogoFile = league.replaceAll("[ .&()-/']", "_").toLowerCase() + "_logo";
-        if (league.contains("NCAA")) {
-            placeHolderLogoFile = "ncaa_logo";
-        }
-        //System.out.println(placeHolderLogoFile);
+        // Transform the team and league names to the logo file naming convention
+        String teamLogoFile = name.replaceAll("[ .&()-/']", "_").toLowerCase();
+        String leagueLogoFile = league.replaceAll("[ .&()-/']", "_").toLowerCase() + "_logo";
 
-        final int placeholderLogoId = resources.getIdentifier(placeHolderLogoFile, "raw", parentContext.getPackageName());
-        final int logoId = resources.getIdentifier(logoFile, "raw", parentContext.getPackageName());
-        if (logoId != 0) {
-            Picasso.with(parentContext).load(logoId).fit().centerCrop().transform(new GrayscaleTransformation()).into(holder.thumbnail);
-            holder.thumbnail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    selectedTeams[position] = !selectedTeams[position];
-                    if (selectedTeams[position]) {
-                        Picasso.with(parentContext).load(logoId).fit().centerCrop().into(holder.thumbnail);
-                    } else {
-                        Picasso.with(parentContext).load(logoId).fit().centerCrop().transform(new GrayscaleTransformation()).into(holder.thumbnail);
-                    }
-                }
-            });
-        } else if (placeholderLogoId != 0) {
-            Picasso.with(parentContext).load(placeholderLogoId).fit().centerCrop().transform(new GrayscaleTransformation()).into(holder.thumbnail);
-            holder.thumbnail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    selectedTeams[position] = !selectedTeams[position];
-                    if (selectedTeams[position]) {
-                        Picasso.with(parentContext).load(placeholderLogoId).fit().centerCrop().into(holder.thumbnail);
-                    } else {
-                        Picasso.with(parentContext).load(placeholderLogoId).fit().centerCrop().transform(new GrayscaleTransformation()).into(holder.thumbnail);
-                    }
-                }
-            });
+        // Get the id for the logo files (set to 0 if they are not present)
+        int teamLogoId = resources.getIdentifier(teamLogoFile, "raw", parentContext.getPackageName());
+        int leagueLogoId = resources.getIdentifier(leagueLogoFile, "raw", parentContext.getPackageName());
+        int soccerLogoId = resources.getIdentifier("soccer", "raw", parentContext.getPackageName());
+        int ncaaLogoId = resources.getIdentifier("ncaa_logo", "raw", parentContext.getPackageName());
+
+        if (teamLogoId != 0) {
+            setupTeamImage(position, holder.thumbnail, teamLogoId);
+
+        } else if (leagueLogoId != 0) {
+            setupTeamImage(position, holder.thumbnail, leagueLogoId);
+
         } else if (league.contains("Soccer")) {
-            final int soccerLogoId = resources.getIdentifier("soccer", "raw", parentContext.getPackageName());
+            setupTeamImage(position, holder.thumbnail, soccerLogoId);
 
-            Picasso.with(parentContext).load(soccerLogoId).fit().centerCrop().transform(new GrayscaleTransformation()).into(holder.thumbnail);
-            holder.thumbnail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    selectedTeams[position] = !selectedTeams[position];
-                    if (selectedTeams[position]) {
-                        Picasso.with(parentContext).load(soccerLogoId).fit().centerCrop().into(holder.thumbnail);
-                    } else {
-                        Picasso.with(parentContext).load(soccerLogoId).fit().centerCrop().transform(new GrayscaleTransformation()).into(holder.thumbnail);
-                    }
-                }
-            });
+        } else if (league.contains("NCAA")) {
+            setupTeamImage(position, holder.thumbnail, ncaaLogoId);
+
         } else {
+            // If there is no picture (hopefully will never get to here)
             holder.thumbnail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -125,6 +97,39 @@ public class TeamInterestRecyclerAdapter extends RecyclerView.Adapter<TeamIntere
         }
 
         holder.teamName.setText(name);
+    }
+
+    /**
+     *
+     * @param position
+     * @param image
+     * @param imageId
+     */
+    private void setupTeamImage(final int position, final ImageView image, final int imageId) {
+        // Set the image, gray or not depending on the current selected value
+        if (selectedTeams[position]) {
+            Picasso.with(parentContext).load(imageId).fit().centerCrop().into(image);
+        } else {
+            Picasso.with(parentContext).load(imageId).fit().centerCrop().transform(
+                    new GrayscaleTransformation()).into(image);
+        }
+
+        // Handle the image being clicked on
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Toggle the selected value
+                selectedTeams[position] = !selectedTeams[position];
+
+                // Update the image to either be gray or colored
+                if (selectedTeams[position]) {
+                    Picasso.with(parentContext).load(imageId).fit().centerCrop().into(image);
+                } else {
+                    Picasso.with(parentContext).load(imageId).fit().centerCrop().transform(
+                            new GrayscaleTransformation()).into(image);
+                }
+            }
+        });
     }
 
     @Override

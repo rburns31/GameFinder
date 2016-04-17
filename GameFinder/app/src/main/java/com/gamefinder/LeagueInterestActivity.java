@@ -1,5 +1,7 @@
 package com.gamefinder;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -39,6 +41,17 @@ public class LeagueInterestActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                 .permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+        AlertDialog dialog = new AlertDialog.Builder(LeagueInterestActivity.this).create();
+        dialog.setTitle("Tips");
+        dialog.setMessage("Click on a league's stars to express your interest. To reset a rating to 0, long press that league's logo.");
+        dialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        dialog.show();
 
         // Set up the recycler view which holds the league cards
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -158,6 +171,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
                     responseBody = supported;
 
                     // Set the adapter to display the current league's team cards
+                    System.out.println("kadsjfbkdasjfb: " + prevPref);
                     final RecyclerView.Adapter adapter = new LeagueInterestRecyclerAdapter(responseBody, prevPref);
                     recyclerView.setAdapter(adapter);
                 } else {
@@ -184,7 +198,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
                     for (PreferencesResponse pref: response.body()) {
                         prefs.add(pref);
                     }
-                    System.out.println(prefs);
+                    System.out.println("League preferences: " + prefs);
                 } else {
                     System.out.println("Response failure when getting league preferences");
                 }

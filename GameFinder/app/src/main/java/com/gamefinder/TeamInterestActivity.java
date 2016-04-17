@@ -4,12 +4,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -37,10 +39,19 @@ public class TeamInterestActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                .permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         // getCompetitorsPrefs API hit, passes the stored preferences to be populated initially
         Call<List<PreferencesResponse>> getCompetitorsPrefsCall
                 = ApiUtils.service.getCompetitorsPrefs(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
-        prevPref = getCompetitorsPrefsApiHit(getCompetitorsPrefsCall);
+        try {
+            prevPref = getCompetitorsPrefsCall.execute().body();
+            System.out.println("TESTTESTTEST: " + prevPref);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
 
         // If this is the first team interest screen then populate the list of all competitors and show the help dialog
         if (competitorsList == null) {
@@ -75,9 +86,17 @@ public class TeamInterestActivity extends AppCompatActivity {
             nextIntent.putExtra("Update", true);
         } else if (getIntent().getBooleanExtra("Update", false)) {
             nextIntent = new Intent(this, GamesScreenActivity.class);
+
+            // Clear out the current static variables
+            currentLeagueLocation = 0;
+            competitorsList = null;
         } else {
             nextIntent = new Intent(this, TvSetupActivity.class);
             nextIntent.putExtra("Update", true);
+
+            // Clear out the current static variables
+            currentLeagueLocation = 0;
+            competitorsList = null;
         }
 
         // Filter out all of the duplicates, TODO: determine how this affects games list
@@ -149,35 +168,10 @@ public class TeamInterestActivity extends AppCompatActivity {
                         }
                     });
                 }
+
                 // Start the next activity
                 startActivity(nextIntent);
             }
         });
-    }
-
-    /**
-     *
-     */
-    public static List<PreferencesResponse> getCompetitorsPrefsApiHit(Call<List<PreferencesResponse>> call) {
-        final List<PreferencesResponse> prefs = new ArrayList<>();
-        call.enqueue(new Callback<List<PreferencesResponse>>() {
-            @Override
-            public void onResponse(Call<List<PreferencesResponse>> call, retrofit2.Response<List<PreferencesResponse>> response) {
-                if (response.isSuccess()) {
-                    for (PreferencesResponse pref: response.body()) {
-                        prefs.add(pref);
-                    }
-                    System.out.println(prefs);
-                } else {
-                    System.out.println("Response failure when getting league preferences");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<PreferencesResponse>> call, Throwable t) {
-                System.out.println(t.getMessage());
-            }
-        });
-        return prefs;
     }
 }

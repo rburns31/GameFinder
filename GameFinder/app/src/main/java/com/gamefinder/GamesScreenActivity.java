@@ -45,7 +45,8 @@ public class GamesScreenActivity extends AppCompatActivity {
 
         // Set up the side drawer list
         ListView drawer = (ListView)findViewById(R.id.drawer);
-        final String[] drawerItems = { "Update Interests", "Manage TVs", "Remote", "Sign Out" };
+        final String[] drawerItems
+                = { "Update Interests", "Manage TVs", "Remote", "Account Management", "Sign Out" };
         drawer.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, drawerItems));
         drawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

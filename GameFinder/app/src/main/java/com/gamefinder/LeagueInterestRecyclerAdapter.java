@@ -76,11 +76,21 @@ public class LeagueInterestRecyclerAdapter extends RecyclerView.Adapter<LeagueIn
             Picasso.with(parentContext).load(ncaaLogoId).fit().centerCrop().into(holder.thumbnail);
         }
 
+        holder.thumbnail.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                System.out.println("Long clicked!!!");
+                league.setRatingStar(0);
+                holder.ratingBar.setRating(0);
+                return true;
+            }
+        });
+
         holder.ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 league.setRatingStar(rating);
-                System.out.println("Star: " + rating);
+                //System.out.println("Star: " + rating);
             }
         });
         holder.ratingBar.setRating(leaguesList.get(position).getRatingStar());

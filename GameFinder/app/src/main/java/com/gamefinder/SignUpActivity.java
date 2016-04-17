@@ -16,6 +16,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
+import okhttp3.Headers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,7 +42,7 @@ public class SignUpActivity extends AppCompatActivity {
         final EditText confirmPassword = (EditText) findViewById(R.id.confirmPassword);
         final TextView linkLogin = (TextView) findViewById(R.id.link_login);
 
-        final Intent intent = new Intent(this, LoginActivity.class);
+        final Intent intent = new Intent(this, LeagueInterestActivity.class);
 
         createAccountButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -54,7 +55,7 @@ public class SignUpActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
                         int responseCode = response.code();
-                        System.out.println(responseCode);
+                        //System.out.println(responseCode);
                         if (responseCode == 403) {
                             String errorMessage = "";
                             try {
@@ -79,6 +80,15 @@ public class SignUpActivity extends AppCompatActivity {
                                     });
                             alertDialog.show();
                         } else if (responseCode == 200) {
+                            Headers headers = response.headers();
+                            ApiUtils.accessToken = headers.get("Access-Token");
+                            ApiUtils.client = headers.get("Client");
+                            ApiUtils.uid = headers.get("UID");
+
+                            System.out.println(headers.get("Access-Token"));
+                            System.out.println(headers.get("Client"));
+                            System.out.println(headers.get("UID"));
+
                             AlertDialog alertDialog
                                     = new AlertDialog.Builder(SignUpActivity.this).create();
                             alertDialog.setTitle("Success");

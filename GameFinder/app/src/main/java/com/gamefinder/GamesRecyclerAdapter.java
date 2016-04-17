@@ -198,7 +198,9 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
         int hour = Integer.parseInt(temp2.substring(0, 2)) - 4;
         if (hour == 0) {
             gameStartTimeText += "12" + temp2.substring(2) + "am ET";
-        } else if (hour >= 12) {
+        } else if (hour == 12) {
+            gameStartTimeText += "12" + temp2.substring(2) + "pm ET";
+        } else if (hour > 12) {
             gameStartTimeText += Integer.toString(hour - 12) + temp2.substring(2) + "pm ET";
         } else if (hour < 0) {
             gameStartTimeText += Integer.toString(hour + 12) + temp2.substring(2) + "pm ET";
@@ -207,7 +209,8 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
         }
 
         // Sets the game data text in the game card's body
-        String gameNameText = team1 + " vs. " + team2;
+        String team1NameText = team1 + " vs. ";
+        String team2NameText = team2;
         String gameLeagueText = "League: " + league;
         String gameRatingText = "Rating: " + rating;
         String gameNetworkText = "Network: " + network;
@@ -218,7 +221,8 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
             holder.watchImage.setVisibility(View.VISIBLE);
         }
 
-        holder.gameName.setText(gameNameText);
+        holder.team1Name.setText(team1NameText);
+        holder.team2Name.setText(team2NameText);
         holder.gameLeague.setText(gameLeagueText);
         holder.gameRating.setText(gameRatingText);
         holder.gameStartTime.setText(gameStartTimeText);
@@ -268,7 +272,8 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        protected TextView gameName;
+        protected TextView team1Name;
+        protected TextView team2Name;
         protected TextView gameLeague;
         protected TextView gameRating;
         protected TextView gameStartTime;
@@ -279,7 +284,8 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
 
         public ViewHolder(View itemView) {
             super(itemView);
-            gameName = (TextView) itemView.findViewById(R.id.gameName);
+            team1Name = (TextView) itemView.findViewById(R.id.team1Name);
+            team2Name = (TextView) itemView.findViewById(R.id.team2Name);
             gameLeague = (TextView) itemView.findViewById(R.id.gameLeague);
             gameRating = (TextView) itemView.findViewById(R.id.gameRating);
             gameStartTime = (TextView) itemView.findViewById(R.id.gameStartTime);

@@ -93,6 +93,10 @@ public class LoginActivity extends AppCompatActivity {
                             ApiUtils.client = headers.get("Client");
                             ApiUtils.uid = headers.get("UID");
 
+                            System.out.println(ApiUtils.accessToken);
+                            System.out.println(ApiUtils.client);
+                            System.out.println(ApiUtils.uid);
+
                             // Check if this user has any league preferences to determine where to direct them next
                             Call<List<PreferencesResponse>> getLeaguesPrefsCall
                                     = ApiUtils.service.getLeaguesPrefs(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
