@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 
 /**
  *
@@ -48,7 +47,6 @@ public class TeamInterestActivity extends AppCompatActivity {
                 = ApiUtils.service.getCompetitorsPrefs(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
         try {
             prevPref = getCompetitorsPrefsCall.execute().body();
-            System.out.println("TESTTESTTEST: " + prevPref);
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
@@ -149,24 +147,14 @@ public class TeamInterestActivity extends AppCompatActivity {
                     PreferenceBody preference = new PreferenceBody();
                     preference.setUser(user);
 
-                    // putPreferences API hit,
-                    Call<List<PreferencesResponse>> call
+                    // putPreferences API hit
+                    Call<List<PreferencesResponse>> putPrefsCall
                             = ApiUtils.service.putPreferences(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid, preference);
-                    call.enqueue(new Callback<List<PreferencesResponse>>() {
-                        @Override
-                        public void onResponse(Call<List<PreferencesResponse>> call, retrofit2.Response<List<PreferencesResponse>> response) {
-                            if (response.isSuccess()) {
-                                System.out.println("Successfully put team interest preferences");
-                            } else {
-                                System.out.println("Failed to put team interest preferences");
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<List<PreferencesResponse>> call, Throwable t) {
-                            System.out.println(t.getMessage());
-                        }
-                    });
+                    try {
+                        putPrefsCall.execute();
+                    } catch (IOException ioe) {
+                        ioe.printStackTrace();
+                    }
                 }
 
                 // Start the next activity

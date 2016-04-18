@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.os.StrictMode;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,11 +19,11 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 
 /**
  *
@@ -41,10 +42,18 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
         this.gamesList = gamesList;
         System.out.println("From RecyclerAdapter, Game List Size: " + gamesList.size());
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                .permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         // Get stored channels for this user for the current tv configuration
         Call<List<ChannelResponse>> getChannelsCall
                 = ApiUtils.service.getChannels(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
-        getChannelsApiHit(getChannelsCall);
+        try {
+            List<ChannelResponse> channels = getChannelsCall.execute().body();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
 
         // Temporary fix until channels api hit is functional, hard-code some channels
         if (currChannels == null) {
@@ -132,27 +141,12 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
                                     channels[0] = new Channel(channelNumField.getText().toString(), network, "1");
                                     ChannelResponse channelResponse = new ChannelResponse(channels);
 
-                                    Call<List<ChannelResponse>> call = ApiUtils.service.postChannels(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid, channelResponse);
-                                    call.enqueue(new Callback<List<ChannelResponse>>() {
-                                        @Override
-                                        public void onResponse(Call<List<ChannelResponse>> call, retrofit2.Response<List<ChannelResponse>> response) {
-                                            if (response.isSuccess()) {
-                                                List<ChannelResponse> responseBody = response.body();
-                                                for (int i = 0; i < responseBody.size(); i++) {
-                                                    System.out.println(responseBody.get(i));
-                                                    //channels.add(responseBody.get(i).getName());
-                                                    //ids.add(Integer.parseInt(responseBody.get(i).getId())); //ids not used yet
-                                                }
-                                            } else {
-                                                System.out.println("Response failure when trying to post channel");
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<List<ChannelResponse>> call, Throwable t) {
-                                            System.out.println(t.getMessage());
-                                        }
-                                    });
+                                    Call<List<ChannelResponse>> postChannelsCall = ApiUtils.service.postChannels(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid, channelResponse);
+                                    try {
+                                        postChannelsCall.execute().body();
+                                    } catch (IOException ioe) {
+                                        ioe.printStackTrace();
+                                    }
 
                                     currChannels.put(network, channelNumField.getText().toString());
 
@@ -210,7 +204,6 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
 
         // Sets the game data text in the game card's body
         String team1NameText = team1 + " vs. ";
-        String team2NameText = team2;
         String gameLeagueText = "League: " + league;
         String gameRatingText = "Rating: " + rating;
         String gameNetworkText = "Network: " + network;
@@ -222,7 +215,7 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
         }
 
         holder.team1Name.setText(team1NameText);
-        holder.team2Name.setText(team2NameText);
+        holder.team2Name.setText(team2);
         holder.gameLeague.setText(gameLeagueText);
         holder.gameRating.setText(gameRatingText);
         holder.gameStartTime.setText(gameStartTimeText);
@@ -235,40 +228,6 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
             return 0;
         }
         return gamesList.size();
-    }
-
-    /**
-     *
-     */
-    private void getChannelsApiHit(Call<List<ChannelResponse>> call) {
-        //final AppCompatActivity thisActivity = this;
-
-        call.enqueue(new Callback<List<ChannelResponse>>() {
-            @Override
-            public void onResponse(Call<List<ChannelResponse>> call, retrofit2.Response<List<ChannelResponse>> response) {
-                if (response.isSuccess()) {
-                    //List<ChannelResponse> channelsResponse = response.body();
-                    //System.out.println(channelsResponse.get(0));
-
-                    /**HashSet<String> supportedLeagues = new HashSet<>();
-
-                    List<ChannelResponse> supported = new ArrayList<>();
-                    for (ChannelResponse channel: channelsResponse) {
-                        if (supportedLeagues.contains(channel.getName())) {
-                            supported.add(channel);
-                        }
-                    }
-                    channelsResponse = supported;*/
-                } else {
-                    System.out.println("Response failure when getting channels");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<ChannelResponse>> call, Throwable t) {
-                System.out.println(t.getMessage());
-            }
-        });
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

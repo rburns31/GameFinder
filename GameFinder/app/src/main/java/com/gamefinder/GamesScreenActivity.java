@@ -48,18 +48,22 @@ public class GamesScreenActivity extends AppCompatActivity {
         final String[] drawerItems
                 = { "Update Interests", "Manage TVs", "Remote", "Account Management", "Sign Out" };
         drawer.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, drawerItems));
+
         drawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (drawerItems[position].equals("Remote")) {
                     startActivity(new Intent(thisActivity, RemoteActivity.class));
+
                 } else if (drawerItems[position].equals("Update Interests")) {
                     Intent intent = new Intent(thisActivity, LeagueInterestActivity.class);
                     intent.putExtra("Update", true);
                     startActivity(intent);
+
                 } else if (drawerItems[position].equals("Sign Out")) {
                     // TODO: See if this counts as signing out or not
                     startActivity(new Intent(thisActivity, LoginActivity.class));
+
                 }
             }
         });

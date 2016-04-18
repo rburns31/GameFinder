@@ -1,8 +1,8 @@
 package com.gamefinder;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,13 +12,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TvSetupActivity extends AppCompatActivity {
 
@@ -26,6 +23,10 @@ public class TvSetupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tv_setup);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                .permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         final Button nextButton = (Button) findViewById(R.id.nextButton);
         final EditText tvConfigName = (EditText) findViewById(R.id.tvConfigName);
@@ -78,19 +79,13 @@ public class TvSetupActivity extends AppCompatActivity {
                     tv.setCable_company(cableSpinner.getSelectedItem().toString());
                     televisionBody.setTelevision(tv);
 
-                    Call<List<TelevisionResponse>> call
+                    Call<List<TelevisionResponse>> postTelevisionCall
                             = ApiUtils.service.postTelevisions(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid, televisionBody);
-                    call.enqueue(new Callback<List<TelevisionResponse>>() {
-                        @Override
-                        public void onResponse(Call<List<TelevisionResponse>> call, Response<List<TelevisionResponse>> response) {
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<List<TelevisionResponse>> call, Throwable t) {
-                            System.out.println("television response failure");
-                        }
-                    });
+                    try {
+                        postTelevisionCall.execute();
+                    } catch (IOException ioe) {
+                        ioe.printStackTrace();
+                    }
                 }
                 startActivity(nextIntent);
             }

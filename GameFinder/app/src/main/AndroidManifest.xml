@@ -64,13 +64,6 @@
         </activity>
 
         <activity
-            android:name=".ChannelsActivity"
-            android:label="@string/title_activity_channels"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light" >
-        </activity>
-
-        <activity
             android:name=".GamesScreenActivity"
             android:label="@string/title_activity_games_screen"
             android:screenOrientation="portrait"
