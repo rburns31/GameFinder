@@ -1,15 +1,13 @@
 package com.gamefinder;
 
 /**
+ *
  * Created by Kevin on 3/7/2016.
  */
 public class PreferenceAttributes {
     private int amount;
-
     private int scale;
-
     private String preference_type;
-
     private int preference_id;
 
     public int getAmount ()

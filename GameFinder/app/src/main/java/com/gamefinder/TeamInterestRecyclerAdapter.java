@@ -23,13 +23,11 @@ import jp.wasabeef.picasso.transformations.GrayscaleTransformation;
 public class TeamInterestRecyclerAdapter extends RecyclerView.Adapter<TeamInterestRecyclerAdapter.ViewHolder> {
     private boolean[] selectedTeams;
     private List<CompetitorsResponse> teamsList;
-    //private List<PreferencesResponse> prevPref;
     private Context parentContext;
 
     public TeamInterestRecyclerAdapter(List<CompetitorsResponse> teamsList, List<PreferencesResponse> prevPref) {
         this.teamsList = teamsList;
-        //this.prevPref = prevPref;
-        System.out.println(prevPref);
+        //System.out.println(prevPref);
         selectedTeams = new boolean[teamsList.size()];
 
         // Populate any previously stored competitor preferences from the server

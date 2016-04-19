@@ -117,44 +117,39 @@ public class TeamInterestActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Store all of the team id's were favorited by the user for this league
-                boolean[] selectedPositions = ((TeamInterestRecyclerAdapter) adapter).getSelectedTeams();
-                ArrayList<Integer> selectedTeamIds = new ArrayList<>();
-                for (int i = 0; i < filteredTeamsList.size(); i++) {
-                    CompetitorsResponse team = filteredTeamsList.get(i);
+                // Get the favorite boolean for each team in the league from the adapter
+                final boolean[] selectedPositions = ((TeamInterestRecyclerAdapter) adapter).getSelectedTeams();
+
+                // For each team, create a preference attributes object
+                PreferenceAttributes[] attributes = new PreferenceAttributes[filteredTeamsList.size()];
+                for (int i = 0; i < attributes.length; i++) {
+                    PreferenceAttributes preferenceAttribute = new PreferenceAttributes();
+                    preferenceAttribute.setPreference_type("Competitor");
+                    preferenceAttribute.setPreference_id(
+                            Integer.parseInt(filteredTeamsList.get(i).getId()));
                     if (selectedPositions[i]) {
-                        System.out.println(team.getName());
-                        selectedTeamIds.add(Integer.parseInt(team.getId()));
+                        preferenceAttribute.setAmount(1);
+                    } else {
+                        preferenceAttribute.setAmount(0);
                     }
+                    preferenceAttribute.setScale(2);
+
+                    attributes[i] = preferenceAttribute;
                 }
 
-                if (selectedTeamIds.size() != 0) {
-                    // For each selected team, create a preference attributes object
-                    PreferenceAttributes[] attributes = new PreferenceAttributes[selectedTeamIds.size()];
-                    for (int i = 0; i < attributes.length; i++) {
-                        PreferenceAttributes preferenceAttribute = new PreferenceAttributes();
-                        preferenceAttribute.setPreference_type("Competitor");
-                        preferenceAttribute.setPreference_id(selectedTeamIds.get(i));
-                        preferenceAttribute.setAmount(1);
-                        preferenceAttribute.setScale(2);
+                // Package these preferences into the desired format
+                PreferenceUser user = new PreferenceUser();
+                user.setPreferences_attributes(attributes);
+                PreferenceBody preference = new PreferenceBody();
+                preference.setUser(user);
 
-                        attributes[i] = preferenceAttribute;
-                    }
-
-                    // Package these preferences into the desired format
-                    PreferenceUser user = new PreferenceUser();
-                    user.setPreferences_attributes(attributes);
-                    PreferenceBody preference = new PreferenceBody();
-                    preference.setUser(user);
-
-                    // putPreferences API hit
-                    Call<List<PreferencesResponse>> putPrefsCall
-                            = ApiUtils.service.putPreferences(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid, preference);
-                    try {
-                        putPrefsCall.execute();
-                    } catch (IOException ioe) {
-                        ioe.printStackTrace();
-                    }
+                // putPreferences API hit
+                Call<List<PreferencesResponse>> putPrefsCall
+                        = ApiUtils.service.putPreferences(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid, preference);
+                try {
+                    putPrefsCall.execute();
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
                 }
 
                 // Start the next activity
