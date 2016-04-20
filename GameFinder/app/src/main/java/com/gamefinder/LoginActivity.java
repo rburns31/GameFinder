@@ -124,12 +124,13 @@ public class LoginActivity extends AppCompatActivity {
         call.enqueue(new Callback<List<PreferencesResponse>>() {
             @Override
             public void onResponse(Call<List<PreferencesResponse>> call, retrofit2.Response<List<PreferencesResponse>> response) {
+                // add preferences on response success
                 if (response.isSuccess()) {
                     for (PreferencesResponse pref: response.body()) {
                         prefs.add(pref);
                     }
                     System.out.println("Prefs from LoginActivity: " + prefs);
-
+                    // if first login, go to gamesScreen otherwise go to LeagueInterest
                     if (prefs.size() > 0) {
                         startActivity(new Intent(thisActivity, GamesScreenActivity.class));
                     } else {

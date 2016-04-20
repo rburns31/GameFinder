@@ -13,6 +13,7 @@ import retrofit2.http.Path;
 
 /**
  *
+ * API Service to manage GET, POST, and PUT requests from the server to the Android app.
  * Created by Kevin on 2/26/2016.
  */
 public interface APIService {

@@ -55,12 +55,14 @@ public class SignUpActivity extends AppCompatActivity {
                         password.getText().toString(),
                         confirmPassword.getText().toString());
 
+                // make retrofit api call to signup
                 Call<SignUpResponse> call = ApiUtils.service.signUp(signUpUser);
                 call.enqueue(new Callback<SignUpResponse>() {
                     @Override
                     public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
                         int responseCode = response.code();
                         //System.out.println(responseCode);
+                        // popup an alert dialog if responseCode is a failure
                         if (responseCode == 403) {
                             String errorMessage = "";
                             try {
@@ -85,6 +87,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         }
                                     });
                             alertDialog.show();
+                        // if successful, start next activity after saving access-token, client, and UID.
                         } else if (responseCode == 200) {
                             Headers headers = response.headers();
                             ApiUtils.accessToken = headers.get("Access-Token");

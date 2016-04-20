@@ -97,11 +97,13 @@ public class GamesScreenActivity extends AppCompatActivity {
 
         //
         try {
+            // get a list of games from the service
             Call<List<GamesResponse>> call
                     = ApiUtils.service.getGames(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
             call.enqueue(new Callback<List<GamesResponse>>() {
                 @Override
                 public void onResponse(Call<List<GamesResponse>> call, Response<List<GamesResponse>> response) {
+                    // retrieve response body on success and add them to the spinner
                     if (response.isSuccess()) {
                         final List<GamesResponse> responseBody = response.body();
                         final List<GamesResponse> gamesToDisplay = new ArrayList<>();
