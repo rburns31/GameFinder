@@ -163,7 +163,9 @@ public class LeagueInterestActivity extends AppCompatActivity {
 
                     // Start the next activity
                     Intent nextIntent = new Intent(LeagueInterestActivity.this, TeamInterestActivity.class);
-                    if (competitors.size() == 0) {
+                    if (competitors.size() == 0 && getIntent().getBooleanExtra("Update", false)) {
+                        nextIntent = new Intent(LeagueInterestActivity.this, GamesScreenActivity.class);
+                    } else if (competitors.size() == 0 && !getIntent().getBooleanExtra("Update", false)) {
                         nextIntent = new Intent(LeagueInterestActivity.this, TvSetupActivity.class);
                     }
                     if (getIntent().getBooleanExtra("Update", false)) {

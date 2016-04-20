@@ -61,7 +61,10 @@ public class GamesScreenActivity extends AppCompatActivity {
                     startActivity(intent);
 
                 } else if (drawerItems[position].equals("Sign Out")) {
-                    // TODO: See if this counts as signing out or not
+                    ApiUtils.accessToken = null;
+                    ApiUtils.client = null;
+                    ApiUtils.uid = null;
+
                     startActivity(new Intent(thisActivity, LoginActivity.class));
 
                 }
@@ -115,8 +118,6 @@ public class GamesScreenActivity extends AppCompatActivity {
                                 leaguesPresent.add(game.getLeague().getName());
                             }
                         }
-                        System.out.println("GamesResponse Size: " + responseBody.size());
-                        System.out.println("Number of leagues present: " + Integer.toString(leaguesPresent.size() - 1));
 
                         Spinner leaguesSpinner = (Spinner) findViewById(R.id.leaguesSpinner);
                         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
@@ -126,7 +127,6 @@ public class GamesScreenActivity extends AppCompatActivity {
                             @Override
                             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                 TextView selected = (TextView) view;
-                                System.out.println(selected.getText().toString());
                                 if (!selected.getText().toString().equals("All")) {
                                     gamesToDisplay.clear();
                                     for (GamesResponse game: responseBody) {

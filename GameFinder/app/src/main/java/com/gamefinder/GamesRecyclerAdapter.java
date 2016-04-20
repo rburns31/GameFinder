@@ -40,7 +40,6 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
 
     public GamesRecyclerAdapter(List<GamesResponse> gamesList) {
         this.gamesList = gamesList;
-        System.out.println("From RecyclerAdapter, Game List Size: " + gamesList.size());
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                 .permitAll().build();

@@ -79,18 +79,21 @@ public class TeamInterestActivity extends AppCompatActivity {
         // Decide where to go after this page
         final Intent nextIntent;
         if (currentLeagueLocation < competitorsList.size() - 1) {
+            // If there are more leagues to show to the user, redirect back here
             currentLeagueLocation++;
             nextIntent = new Intent(this, TeamInterestActivity.class);
-            nextIntent.putExtra("Update", true);
-        } else if (getIntent().getBooleanExtra("Update", false)) {
-            nextIntent = new Intent(this, GamesScreenActivity.class);
 
-            // Clear out the current static variables
-            currentLeagueLocation = 0;
-            competitorsList = null;
+            // If we are updating, propagate that information to the next team interest screen
+            if (getIntent().getBooleanExtra("Update", false)) {
+                nextIntent.putExtra("Update", true);
+            }
         } else {
-            nextIntent = new Intent(this, TvSetupActivity.class);
-            nextIntent.putExtra("Update", true);
+            // If there are no more leagues to show, redirect to either the tv setup or the games screen
+            if (getIntent().getBooleanExtra("Update", false)) {
+                nextIntent = new Intent(this, GamesScreenActivity.class);
+            } else {
+                nextIntent = new Intent(this, TvSetupActivity.class);
+            }
 
             // Clear out the current static variables
             currentLeagueLocation = 0;
