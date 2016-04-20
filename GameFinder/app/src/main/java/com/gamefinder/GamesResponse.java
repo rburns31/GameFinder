@@ -7,10 +7,10 @@ package com.gamefinder;
 public class GamesResponse {
     private String score;
     private String start_time;
-    private League league;
+    private LeaguesResponse league;
     private String network;
-    private Competitor competitor_1;
-    private Competitor competitor_2;
+    private CompetitorsResponse competitor_1;
+    private CompetitorsResponse competitor_2;
 
     public String getScore ()
     {
@@ -32,12 +32,12 @@ public class GamesResponse {
         this.start_time = start_time;
     }
 
-    public League getLeague ()
+    public LeaguesResponse getLeague ()
     {
         return league;
     }
 
-    public void setLeague (League league)
+    public void setLeague (LeaguesResponse league)
     {
         this.league = league;
     }
@@ -52,22 +52,22 @@ public class GamesResponse {
         this.network = network;
     }
 
-    public Competitor getCompetitor_1 ()
+    public CompetitorsResponse getCompetitor_1 ()
     {
         return competitor_1;
     }
 
-    public void setCompetitor_1 (Competitor competitor_1)
+    public void setCompetitor_1 (CompetitorsResponse competitor_1)
     {
         this.competitor_1 = competitor_1;
     }
 
-    public Competitor getCompetitor_2 ()
+    public CompetitorsResponse getCompetitor_2 ()
     {
         return competitor_2;
     }
 
-    public void setCompetitor_2 (Competitor competitor_2)
+    public void setCompetitor_2 (CompetitorsResponse competitor_2)
     {
         this.competitor_2 = competitor_2;
     }

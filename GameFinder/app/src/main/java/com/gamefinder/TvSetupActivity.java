@@ -73,7 +73,8 @@ public class TvSetupActivity extends AppCompatActivity {
                 // If a tv config name and brand are input then save them on the server
                 if (nextButton.getText().toString().equals("Next")) {
                     TelevisionBody televisionBody = new TelevisionBody();
-                    Television tv = new Television();
+                    TelevisionResponse tv = new TelevisionResponse();
+                    tv.setId("1");
                     tv.setName(tvConfigName.getText().toString());
                     tv.setBrand(tvBrandSpinner.getSelectedItem().toString());
                     tv.setCable_company(cableSpinner.getSelectedItem().toString());
