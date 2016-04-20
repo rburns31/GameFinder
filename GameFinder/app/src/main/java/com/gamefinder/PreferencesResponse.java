@@ -6,11 +6,8 @@ package com.gamefinder;
  */
 public class PreferencesResponse {
     private String amount;
-
     private String scale;
-
     private String preference_type;
-
     private String preference_id;
 
     public String getAmount ()

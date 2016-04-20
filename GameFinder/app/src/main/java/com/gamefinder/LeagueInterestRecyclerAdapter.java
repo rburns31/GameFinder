@@ -16,15 +16,26 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- *
+ * Controls the list of cards associated to leagues in the league interest activity
  * Created by Ryan on 4/2/2016.
  */
-public class LeagueInterestRecyclerAdapter extends RecyclerView.Adapter<LeagueInterestRecyclerAdapter.ViewHolder> {
+public class LeagueInterestRecyclerAdapter
+        extends RecyclerView.Adapter<LeagueInterestRecyclerAdapter.ViewHolder> {
+    /**
+     * The list of the names of every supported league
+     */
     private List<LeaguesResponse> leaguesList;
+    /**
+     * Any league preferences currently in the database for this user (blank if first time setup)
+     */
     private List<PreferencesResponse> prevPref;
+    /**
+     * The parent context (used for getting resources and layouts from the league interest activity)
+     */
     private Context parentContext;
 
-    public LeagueInterestRecyclerAdapter(List<LeaguesResponse> leaguesList, List<PreferencesResponse> prevPref) {
+    public LeagueInterestRecyclerAdapter(List<LeaguesResponse> leaguesList,
+                                         List<PreferencesResponse> prevPref) {
         this.leaguesList = leaguesList;
         this.prevPref = prevPref;
     }
@@ -60,8 +71,7 @@ public class LeagueInterestRecyclerAdapter extends RecyclerView.Adapter<LeagueIn
         // Loads the logo into the image view on the team card
         Resources resources = parentContext.getResources();
 
-        String logoFile = name.replaceAll("[ .&]", "_").toLowerCase() + "_logo";
-        //System.out.println(logoFile);
+        String logoFile = name.replaceAll(" ", "_").toLowerCase() + "_logo";
 
         int logoId = resources.getIdentifier(logoFile, "raw", parentContext.getPackageName());
         if (logoId != 0) {
@@ -76,10 +86,10 @@ public class LeagueInterestRecyclerAdapter extends RecyclerView.Adapter<LeagueIn
             Picasso.with(parentContext).load(ncaaLogoId).fit().centerCrop().into(holder.thumbnail);
         }
 
+        // If a league icon is long clicked, reset its value to 0
         holder.thumbnail.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                System.out.println("Long clicked!!!");
                 league.setRatingStar(0);
                 holder.ratingBar.setRating(0);
                 return true;

@@ -73,6 +73,7 @@ public class SignUpActivity extends AppCompatActivity {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+
                             AlertDialog alertDialog
                                     = new AlertDialog.Builder(SignUpActivity.this).create();
                             alertDialog.setTitle("Alert");

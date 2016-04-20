@@ -22,14 +22,23 @@ import java.util.List;
 import retrofit2.Call;
 
 /**
- *
+ * The league interest activity allows users to select a number of stars for each supported league
+ *     which represents their interest in those leagues
  */
 public class LeagueInterestActivity extends AppCompatActivity {
     /**
      * Holds the response from the getLeagues API hit
      */
     private List<LeaguesResponse> responseBody;
+    /**
+     * Any league preferences currently in the database for this user (blank if first time setup)
+     */
     private List<PreferencesResponse> prevPref;
+    /**
+     * A list of lists of competitors which is the data structure passed to the team interest
+     *     activity
+     * Each inner list contains all of the competitors for each league with a non-zero preference
+     */
     private static List<List<CompetitorsResponse>> competitors;
 
     @Override
@@ -37,6 +46,7 @@ public class LeagueInterestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_league_interest);
 
+        // Keeps the application from throwing an error when doing a synchronous API call
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                 .permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -44,9 +54,11 @@ public class LeagueInterestActivity extends AppCompatActivity {
         // Verify that the phone's keyboard is closed
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+        // Display a diagnostic tip dialog to the user about how to function this screen
         AlertDialog dialog = new AlertDialog.Builder(LeagueInterestActivity.this).create();
         dialog.setTitle("Tips");
-        dialog.setMessage("Click on a league's stars to express your interest. To reset a rating to 0, long press that league's logo.");
+        dialog.setMessage("Click on a league's stars to express your interest. " +
+                "To reset a rating to 0, long press that league's logo.");
         dialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

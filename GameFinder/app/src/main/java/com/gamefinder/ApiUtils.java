@@ -4,7 +4,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- *
+ * Contains utilities for communicating with the API using retrofit
+ * Includes the base url, the three headers to be passed on an API call, and the service which
+ *     facilitates the connection
  * Created by Ryan on 4/2/2016.
  */
 public class ApiUtils {

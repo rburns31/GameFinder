@@ -1,7 +1,7 @@
 package com.gamefinder;
 
 /**
- *
+ * Holds the attributes of a league when returned from the getLeagues API endpoint
  * Created by Kevin on 3/5/2016.
  */
 public class LeaguesResponse {
@@ -29,7 +29,7 @@ public class LeaguesResponse {
         this.name = name;
     }
 
-    public float getRatingStar() {return rating;}
+    public float getRatingStar() { return rating; }
 
-    public void setRatingStar(float rating) {this.rating = rating;}
+    public void setRatingStar(float rating) { this.rating = rating; }
 }
