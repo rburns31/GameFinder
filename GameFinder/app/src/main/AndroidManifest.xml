@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.gamefinder" >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.gamefinder">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -12,64 +11,56 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
-
+        android:theme="@style/AppTheme">
         <activity
             android:name=".LoginActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".SignUpActivity"
             android:parentActivityName=".LoginActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.gamefinder.LoginActivity" />
         </activity>
-
         <activity
             android:name=".RemoteActivity"
             android:label="@string/title_activity_remote"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light" >
-        </activity>
-
+            android:theme="@style/Theme.AppCompat.Light"></activity>
         <activity
             android:name=".LeagueInterestActivity"
             android:label="@string/title_activity_league_interest"
-            android:theme="@style/Theme.AppCompat.Light"
-            android:screenOrientation="portrait" >
-        </activity>
-
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light"></activity>
         <activity
             android:name=".TeamInterestActivity"
             android:label="@string/title_activity_team_interest"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light" >
-        </activity>
-
+            android:theme="@style/Theme.AppCompat.Light"></activity>
         <activity
             android:name=".TvSetupActivity"
             android:label="@string/title_activity_tv_setup"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light" >
-        </activity>
-
+            android:theme="@style/Theme.AppCompat.Light"></activity>
         <activity
             android:name=".GamesScreenActivity"
             android:label="@string/title_activity_games_screen"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light" >
-        </activity>
-
+            android:theme="@style/Theme.AppCompat.Light"></activity>
+        <activity
+            android:name=".ManageTvsActivity"
+            android:label="@string/title_activity_manage_tvs"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light"></activity>
     </application>
 
 </manifest>

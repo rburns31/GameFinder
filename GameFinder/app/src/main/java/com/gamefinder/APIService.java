@@ -74,10 +74,10 @@ public interface APIService {
 
     @Headers({"Token-Type: Bearer",
             "Content-Type: application/json"})
-    @PUT("user/televisions/:id")
+    @PUT("user/televisions/{id}")
     Call<List<TelevisionResponse>> putTelevisionSelected(@Header("Access-Token")String accessToken,
                                                    @Header("Client")String client,
-                                                   @Header("UID")String uid, @Body TelevisionBody television);
+                                                   @Header("UID")String uid, @Body TelevisionBody television, @Path("id") int id);
 
     @Headers("Token-Type: Bearer")
     @GET("user/televisions")

@@ -74,7 +74,7 @@ public class GamesScreenActivity extends AppCompatActivity {
 
                 } else if (drawerItems[position].equals("Manage TVs")) {
                     // TODO: FIX
-                    startActivity(new Intent(thisActivity, TvSetupActivity.class));
+                    startActivity(new Intent(thisActivity, ManageTvsActivity.class));
 
                 } else if (drawerItems[position].equals("Sign Out")) {
                     ApiUtils.accessToken = null;

@@ -42,6 +42,7 @@
 
     <string name="teamName">Team Name</string>
     <string name="leagueName">League Name</string>
+    <string name="tvName">Tv Name</string>
     <string name="gameName">Game Name</string>
     <string name="gameLeague">Game League</string>
     <string name="gameRating">Game Rating</string>
@@ -54,4 +55,7 @@
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+    <string name="title_activity_manage_tvs">ManageTvsActivity</string>
+    <string name="tvBrand">Tv Brand</string>
+    <string name="tvCable">Cable Company</string>
 </resources>
