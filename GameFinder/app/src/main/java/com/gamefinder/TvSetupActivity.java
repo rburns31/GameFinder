@@ -81,12 +81,31 @@ public class TvSetupActivity extends AppCompatActivity {
                     tv.setSelected(true);
                     televisionBody.setTelevision(tv);
 
+                    // Add the tv the DB
                     Call<List<TelevisionResponse>> postTelevisionCall
                             = ApiUtils.service.postTelevisions(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid, televisionBody);
+                    List<TelevisionResponse> responseBody = null;
                     try {
-                        List<TelevisionResponse> responseBody = postTelevisionCall.execute().body();
+                        responseBody = postTelevisionCall.execute().body();
                     } catch (IOException ioe) {
                         ioe.printStackTrace();
+                    }
+
+                    if (responseBody != null) {
+                        for (TelevisionResponse tvResponse: responseBody) {
+                            if (tvResponse.getName().equals(tvConfigName.getText().toString())) {
+                                // Set the new tv to have the selected value
+                                Television tvSelect = new Television();
+                                tvSelect.setSelected(true);
+                                Call<List<TelevisionResponse>> putTelevisionSelectedCall
+                                        = ApiUtils.service.putTelevisionSelected(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid, tvSelect, tvResponse.getId());
+                                try {
+                                    putTelevisionSelectedCall.execute();
+                                } catch (IOException ioe) {
+                                    ioe.printStackTrace();
+                                }
+                            }
+                        }
                     }
                 }
                 startActivity(nextIntent);

@@ -74,7 +74,7 @@ public class GamesScreenActivity extends AppCompatActivity {
         // Set up the side drawer list
         ListView drawer = (ListView)findViewById(R.id.drawer);
         final String[] drawerItems
-                = { "Update Interests", "Manage TVs", "Remote", "Account Management", "Sign Out" };
+                = { "Update Interests", "Manage Tvs", "Add Tv", "Remote", "Account Management", "Sign Out" };
         drawer.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, drawerItems));
 
         drawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -88,9 +88,11 @@ public class GamesScreenActivity extends AppCompatActivity {
                     intent.putExtra("Update", true);
                     startActivity(intent);
 
-                } else if (drawerItems[position].equals("Manage TVs")) {
-                    // TODO: FIX
+                } else if (drawerItems[position].equals("Manage Tvs")) {
                     startActivity(new Intent(thisActivity, ManageTvsActivity.class));
+
+                } else if (drawerItems[position].equals("Add Tv")) {
+                    startActivity(new Intent(thisActivity, TvSetupActivity.class));
 
                 } else if (drawerItems[position].equals("Sign Out")) {
                     ApiUtils.accessToken = null;

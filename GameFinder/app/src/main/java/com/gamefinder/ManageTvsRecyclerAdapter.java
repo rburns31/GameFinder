@@ -9,6 +9,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -21,6 +22,7 @@ public class ManageTvsRecyclerAdapter extends RecyclerView.Adapter<ManageTvsRecy
     private Context parentContext;
     private List<TelevisionResponse> responseBody;
     private int selectedIndex;
+    private List<CheckBox> allCheckBoxes = new ArrayList<>();
 
     public ManageTvsRecyclerAdapter() {
         super();
@@ -32,6 +34,14 @@ public class ManageTvsRecyclerAdapter extends RecyclerView.Adapter<ManageTvsRecy
             responseBody = getTelevisionsCall.execute().body();
         } catch (IOException ioe) {
             ioe.printStackTrace();
+        }
+
+        // Set the selected index from the DB
+        for (int i = 0; i < responseBody.size(); i++) {
+            TelevisionResponse tv = responseBody.get(i);
+            if (tv.getSelected()) {
+                selectedIndex = i;
+            }
         }
     }
 
@@ -48,24 +58,37 @@ public class ManageTvsRecyclerAdapter extends RecyclerView.Adapter<ManageTvsRecy
     public void onBindViewHolder(ViewHolder holder, final int position) {
         TelevisionResponse tv = responseBody.get(position);
 
+        //
         holder.tvName.setText(tv.getName());
         String tvBrandText = "Brand: " + tv.getBrand();
         holder.tvBrand.setText(tvBrandText);
         String tvCableText = "Cable Company: " + tv.getCable_company();
         holder.tvCable.setText(tvCableText);
 
-        //if (selectedIndex == position) {
-        //    holder.selectCheckbox.setSelected(true);
-        //} else {
-        //    holder.selectCheckbox.setSelected(false);
-        //}
+        final CheckBox thisCheckBox = (CheckBox) holder.itemView.findViewById(R.id.checkBox);
+        allCheckBoxes.add(thisCheckBox);
 
-        //holder.selectCheckbox.setOnClickListener(new View.OnClickListener() {
-        //    @Override
-        //    public void onClick(View v) {
-        //        selectedIndex = position;
-        //    }
-        //});
+        //
+        if (selectedIndex == position) {
+            thisCheckBox.setChecked(true);
+        } else {
+            thisCheckBox.setChecked(false);
+        }
+
+        thisCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // If not clicking the already selected checkbox
+                if (selectedIndex != position) {
+                    // Un-check the last checkbox
+                    allCheckBoxes.get(selectedIndex).setChecked(false);
+
+                    selectedIndex = position;
+                } else {
+                    thisCheckBox.setChecked(true);
+                }
+            }
+        });
     }
 
     @Override
@@ -74,6 +97,10 @@ public class ManageTvsRecyclerAdapter extends RecyclerView.Adapter<ManageTvsRecy
             return 0;
         }
         return responseBody.size();
+    }
+
+    public int getSelectedTvId() {
+        return responseBody.get(selectedIndex).getId();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

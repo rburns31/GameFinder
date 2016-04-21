@@ -77,7 +77,7 @@ public interface APIService {
     @PUT("user/televisions/{id}")
     Call<List<TelevisionResponse>> putTelevisionSelected(@Header("Access-Token")String accessToken,
                                                    @Header("Client")String client,
-                                                   @Header("UID")String uid, @Body TelevisionBody television, @Path("id") int id);
+                                                   @Header("UID")String uid, @Body Television tv, @Path("id") int id);
 
     @Headers("Token-Type: Bearer")
     @GET("user/televisions")
