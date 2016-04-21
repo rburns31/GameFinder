@@ -61,6 +61,12 @@
             android:label="@string/title_activity_manage_tvs"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light"></activity>
+        <service
+            android:name=".ScheduleService"
+            android:exported="false"/>
+        <service
+            android:name=".NotifyService"
+            android:exported="false" />
     </application>
 
 </manifest>

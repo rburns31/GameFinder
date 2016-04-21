@@ -1,8 +1,13 @@
 package com.gamefinder;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +23,7 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import retrofit2.Call;
@@ -46,10 +52,20 @@ public class GamesScreenActivity extends AppCompatActivity {
      */
     private AppCompatActivity thisActivity = this;
 
+    /**
+     *
+     *
+     */
+    private ScheduleClient scheduleClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gamescreen);
+
+        // Create a new service client and bind our activity to this service
+        scheduleClient = new ScheduleClient(this);
+        scheduleClient.doBindService();
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -146,7 +162,7 @@ public class GamesScreenActivity extends AppCompatActivity {
                                 TextView selected = (TextView) view;
                                 if (!selected.getText().toString().equals("All")) {
                                     gamesToDisplay.clear();
-                                    for (GamesResponse game: responseBody) {
+                                    for (GamesResponse game : responseBody) {
                                         if (game.getLeague().getName().equals(selected.getText().toString())) {
                                             gamesToDisplay.add(game);
                                         }
@@ -159,11 +175,42 @@ public class GamesScreenActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onNothingSelected(AdapterView<?> parentView) { }
+                            public void onNothingSelected(AdapterView<?> parentView) {
+                            }
                         });
 
                         adapter = new GamesRecyclerAdapter(gamesToDisplay);
                         recyclerView.setAdapter(adapter);
+
+                        Calendar c = Calendar.getInstance();
+
+                        String startTime = responseBody.get(0).getStart_time();
+                        String hour = startTime.split("[T.]")[1];
+                        String minute = hour.substring(0, hour.length() - 3);
+
+                        //set notification for top most game
+                        //c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+                        //c.set(Calendar.MINUTE, Integer.parseInt(minute)-5); //5 minutes before
+                        //c.set(Calendar.SECOND, 0);
+
+                        //ask service to set an alarm for that date
+                        //scheduleClient.setAlarmForNotification(c);
+
+                        //for testing and/or better way
+                        PendingIntent contentIntent = PendingIntent.getActivity(thisActivity, 0, new Intent(thisActivity, GamesScreenActivity.class), 0);
+                        int notif_id = 1;
+                        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext())
+                                .setContentIntent(contentIntent)
+                                .setContentTitle(responseBody.get(0).getCompetitor_1().getName() + " vs. " + responseBody.get(0).getCompetitor_2().getName())
+                                .setContentText("Game Starting Soon!")
+                                .setWhen(System.currentTimeMillis() + (1000*30))
+                                .setSmallIcon(R.drawable.ic_dialog_alert);
+                        Notification notification = notificationBuilder.build();
+
+                        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                        mNotificationManager.notify(notif_id, notification);
+
+                        System.out.println("Alarm set: " + (System.currentTimeMillis() + 1000*30));
                     }
                 }
 
