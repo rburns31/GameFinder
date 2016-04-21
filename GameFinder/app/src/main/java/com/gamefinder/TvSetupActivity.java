@@ -37,9 +37,9 @@ public class TvSetupActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if (!tvBrandSpinner.getSelectedItem().equals("None/Other") && !tvConfigName.getText().toString().equals("")) {
-                    nextButton.setText("Next");
+                    nextButton.setText(R.string.next);
                 } else {
-                    nextButton.setText("Skip");
+                    nextButton.setText(R.string.skip);
                 }
             }
 
@@ -53,9 +53,9 @@ public class TvSetupActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (!tvBrandSpinner.getSelectedItem().equals("None/Other") && !tvConfigName.getText().toString().equals("")) {
-                    nextButton.setText("Next");
+                    nextButton.setText(R.string.next);
                 } else {
-                    nextButton.setText("Skip");
+                    nextButton.setText(R.string.skip);
                 }
             }
 
@@ -74,16 +74,17 @@ public class TvSetupActivity extends AppCompatActivity {
                 if (nextButton.getText().toString().equals("Next")) {
                     TelevisionBody televisionBody = new TelevisionBody();
                     TelevisionResponse tv = new TelevisionResponse();
-                    tv.setId("1");
+                    tv.setId(1);
                     tv.setName(tvConfigName.getText().toString());
                     tv.setBrand(tvBrandSpinner.getSelectedItem().toString());
                     tv.setCable_company(cableSpinner.getSelectedItem().toString());
+                    tv.setSelected(true);
                     televisionBody.setTelevision(tv);
 
                     Call<List<TelevisionResponse>> postTelevisionCall
                             = ApiUtils.service.postTelevisions(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid, televisionBody);
                     try {
-                        postTelevisionCall.execute();
+                        List<TelevisionResponse> responseBody = postTelevisionCall.execute().body();
                     } catch (IOException ioe) {
                         ioe.printStackTrace();
                     }

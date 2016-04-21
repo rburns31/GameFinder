@@ -4,37 +4,37 @@ package com.gamefinder;
  *
  */
 public class Channel {
-    private String channelNumber;
-    private String channelAcronym;
-    private String televisionId;
+    private int channel_number;
+    private String channel_acronym;
+    private int television_id;
 
-    public Channel(String channelNumber, String channelAcronym, String televisionId) {
-        this.channelNumber = channelNumber;
-        this.channelAcronym = channelAcronym;
-        this.televisionId = televisionId;
+    public Channel(int channel_number, String channel_acronym, int television_id) {
+        this.channel_number = channel_number;
+        this.channel_acronym = channel_acronym;
+        this.television_id = television_id;
     }
 
-    public String getChannelAcronym () {
-        return channelAcronym;
+    public String getChannel_acronym () {
+        return channel_acronym;
     }
 
-    public void setChannelAcronym (String channelAcronym) {
-        this.channelAcronym = channelAcronym;
+    public void setChannel_acronym (String channel_acronym) {
+        this.channel_acronym = channel_acronym;
     }
 
-    public String getChannelNumber () {
-        return channelNumber;
+    public int getChannel_number () {
+        return channel_number;
     }
 
-    public void setChannelNumber (String channelNumber) {
-        this.channelNumber = channelNumber;
+    public void setChannel_number (int channel_number) {
+        this.channel_number = channel_number;
     }
 
-    public String getTelevisionId () {
-        return televisionId;
+    public int getTelevision_id () {
+        return television_id;
     }
 
-    public void setTelevisionId (String televisionId) {
-        this.televisionId = televisionId;
+    public void setTelevision_id (int television_id) {
+        this.television_id = television_id;
     }
 }

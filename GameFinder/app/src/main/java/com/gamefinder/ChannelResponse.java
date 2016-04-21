@@ -7,10 +7,6 @@ package com.gamefinder;
 public class ChannelResponse {
     private Channel[] channels;
 
-    public ChannelResponse(Channel[] channels) {
-        this.channels = channels;
-    }
-
     public Channel[] getChannels() {
         return channels;
     }

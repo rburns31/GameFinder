@@ -29,37 +29,60 @@ import retrofit2.Call;
  *
  */
 public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdapter.ViewHolder> {
+    /**
+     *
+     */
     private List<GamesResponse> gamesList;
+    /**
+     *
+     */
     private Context parentContext;
     /**
      * The channels which the user has inputted numbers for on the current tv configuration
      */
-    private HashMap<String, String> currChannels;
-
-    private String currTvBrand = "Toshiba";
+    private HashMap<String, String> currChannels = new HashMap<>();
+    /**
+     *
+     */
+    private TelevisionResponse currSelectedTv;
 
     public GamesRecyclerAdapter(List<GamesResponse> gamesList) {
         this.gamesList = gamesList;
 
+        //
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                 .permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        // Get stored channels for this user for the current tv configuration
-        Call<List<ChannelResponse>> getChannelsCall
-                = ApiUtils.service.getChannels(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
+        // Get the televisions from the database and set the currently selected tv
+        Call<List<TelevisionResponse>> getTelevisionsCall
+                = ApiUtils.service.getTelevisions(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
         try {
-            List<ChannelResponse> channels = getChannelsCall.execute().body();
+            List<TelevisionResponse> responseBody = getTelevisionsCall.execute().body();
+            for (TelevisionResponse tv: responseBody) {
+                //System.out.println("Television from DB named: " + tv.getName());
+                if (tv.getSelected()) {
+                    currSelectedTv = tv;
+                }
+            }
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
 
-        // Temporary fix until channels api hit is functional, hard-code some channels
-        if (currChannels == null) {
-            currChannels = new HashMap<>();
-            currChannels.put("ESPN", "12");
-            currChannels.put("NBA TV", "8");
-            currChannels.put("TNT", "56");
+        // Get stored channels for this user for the current tv configuration
+        Call<List<Channel>> getChannelsCall
+                = ApiUtils.service.getChannels(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid);
+        try {
+            List<Channel> channels = getChannelsCall.execute().body();
+            for (Channel channel: channels) {
+                if (channel.getTelevision_id() == currSelectedTv.getId()) {
+                    System.out.println(channel);
+                    currChannels.put(channel.getChannel_acronym(),
+                            Integer.toString(channel.getChannel_number()));
+                }
+            }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
         }
     }
 
@@ -69,6 +92,7 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
         parentContext = parent.getContext();
         View view = LayoutInflater.from(parentContext).inflate(R.layout.game_card, parent, false);
 
+        //
         RemoteActivity.setUp(parentContext);
 
         return new ViewHolder(view);
@@ -89,7 +113,19 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
         holder.watchImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currChannels.containsKey(network)) {
+                if (currSelectedTv == null) {
+                    AlertDialog dialog = new AlertDialog.Builder(parentContext).create();
+                    dialog.setTitle("Tips");
+                    dialog.setMessage("You do not currently have any Tvs setup. Please select " +
+                            "'Manage Tvs' from the options drawer to set one up.");
+                    dialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    dialog.show();
+                } else if (currChannels.containsKey(network)) {
                     Toast toast = Toast.makeText(parentContext,
                             "Switching the channel to " + network, Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.BOTTOM, 10, 0);
@@ -98,7 +134,7 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
                     // Send each digit of the stored channel number
                     String channelNum = currChannels.get(network);
                     for (int i = 0; i < channelNum.length(); i++) {
-                        String id = currTvBrand.toLowerCase() + "_" + channelNum.charAt(i);
+                        String id = currSelectedTv.getBrand().toLowerCase() + "_" + channelNum.charAt(i);
                         int[] payload = RemoteActivity.controls.get(id);
                         Integer frequency = RemoteActivity.frequencies.get(id);
 
@@ -108,7 +144,7 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
                     }
 
                     // Send an enter signal
-                    String id = currTvBrand.toLowerCase() + "_enter";
+                    String id = currSelectedTv.getBrand().toLowerCase() + "_enter";
                     int[] payload = RemoteActivity.controls.get(id);
                     Integer frequency = RemoteActivity.frequencies.get(id);
 
@@ -137,8 +173,10 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
                                 public void onClick(DialogInterface dialog, int which) {
                                     // TODO: Save this to the server
                                     Channel[] channels = new Channel[1];
-                                    channels[0] = new Channel(channelNumField.getText().toString(), network, "1");
-                                    ChannelResponse channelResponse = new ChannelResponse(channels);
+                                    channels[0] = new Channel(Integer.parseInt(
+                                            channelNumField.getText().toString()), network, currSelectedTv.getId());
+                                    ChannelResponse channelResponse = new ChannelResponse();
+                                    channelResponse.setChannels(channels);
 
                                     Call<List<ChannelResponse>> postChannelsCall = ApiUtils.service.postChannels(ApiUtils.accessToken, ApiUtils.client, ApiUtils.uid, channelResponse);
                                     try {
@@ -161,11 +199,8 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
         Resources resources = parentContext.getResources();
 
         String logoFile1 = team1.replaceAll("[ .&()-/']", "_").toLowerCase();
-        //System.out.println(logoFile1);
         String logoFile2 = team2.replaceAll("[ .&()-/']", "_").toLowerCase();
-        //System.out.println(logoFile2);
         String placeHolderLogoFile = league.replaceAll("[ .()-/']", "_").toLowerCase() + "_logo";
-        //System.out.println(placeHolderLogoFile);
 
         int placeholderLogo = resources.getIdentifier(placeHolderLogoFile, "raw", parentContext.getPackageName());
 
@@ -229,6 +264,9 @@ public class GamesRecyclerAdapter extends RecyclerView.Adapter<GamesRecyclerAdap
         return gamesList.size();
     }
 
+    /**
+     *
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         protected TextView team1Name;
         protected TextView team2Name;

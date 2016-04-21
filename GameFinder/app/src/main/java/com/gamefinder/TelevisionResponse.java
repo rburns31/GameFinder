@@ -1,23 +1,22 @@
 package com.gamefinder;
 
 /**
+ *
  * Created by Kevin on 3/30/2016.
  */
 public class TelevisionResponse {
-    private String id;
-
+    private int id;
     private String name;
-
     private String cable_company;
-
     private String brand;
+    private boolean selected;
 
-    public String getId ()
+    public int getId ()
     {
         return id;
     }
 
-    public void setId (String id)
+    public void setId (int id)
     {
         this.id = id;
     }
@@ -50,6 +49,16 @@ public class TelevisionResponse {
     public void setBrand (String brand)
     {
         this.brand = brand;
+    }
+
+    public boolean getSelected ()
+    {
+        return selected;
+    }
+
+    public void setSelected (boolean selected)
+    {
+        this.selected = selected;
     }
 
 }

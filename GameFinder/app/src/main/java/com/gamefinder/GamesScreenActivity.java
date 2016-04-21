@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +29,21 @@ import retrofit2.Response;
  * Code for creating a drawer layout was adapted from this source: http://blog.teamtreehouse.com/add-navigation-drawer-android
  */
 public class GamesScreenActivity extends AppCompatActivity {
+    /**
+     *
+     */
     private RecyclerView recyclerView;
+    /**
+     *
+     */
     private RecyclerView.Adapter adapter;
+    /**
+     *
+     */
     private ActionBarDrawerToggle drawerToggle;
-
+    /**
+     *
+     */
     private AppCompatActivity thisActivity = this;
 
     @Override
@@ -59,6 +71,10 @@ public class GamesScreenActivity extends AppCompatActivity {
                     Intent intent = new Intent(thisActivity, LeagueInterestActivity.class);
                     intent.putExtra("Update", true);
                     startActivity(intent);
+
+                } else if (drawerItems[position].equals("Manage TVs")) {
+                    // TODO: FIX
+                    startActivity(new Intent(thisActivity, TvSetupActivity.class));
 
                 } else if (drawerItems[position].equals("Sign Out")) {
                     ApiUtils.accessToken = null;
@@ -119,6 +135,7 @@ public class GamesScreenActivity extends AppCompatActivity {
                             }
                         }
 
+                        //
                         Spinner leaguesSpinner = (Spinner) findViewById(R.id.leaguesSpinner);
                         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
                                 thisActivity, android.R.layout.simple_spinner_item, leaguesPresent);
